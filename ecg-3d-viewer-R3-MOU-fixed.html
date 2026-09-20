@@ -1,65 +1,94 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MOU/R3 · ECG dashboard</title>
-<style>
-:root{--c:#38dfff;--v:#c084fc;--o:#f59e0b;--b:#020814}
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--b);font-family:Inter,system-ui,Segoe UI,sans-serif;color:#eaf4ff}
-.frame{position:fixed;inset:0;background:#020814;overflow:hidden}
-.gridbg{position:absolute;inset:0;opacity:.22;background-image:linear-gradient(rgba(56,223,255,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(56,223,255,.12) 1px,transparent 1px);background-size:42px 42px;transform:perspective(700px) rotateX(62deg) scale(1.7);transform-origin:50% 80%}
-.heart-svg{position:absolute;inset:7%;width:86%;height:86%;filter:drop-shadow(0 0 28px rgba(56,223,255,.48));transition:transform .7s ease}.heart-svg.rot{animation:heartrot 7s linear infinite}@keyframes heartrot{to{transform:rotateY(360deg)}}.heart-fill{fill:url(#heartGrad);stroke:#8defff;stroke-width:3}.vessel{fill:none;stroke-linecap:round;stroke-width:7;opacity:.8}.c{stroke:var(--c)}.o{stroke:var(--o)}.v{stroke:var(--v)}
-.heart3d{position:absolute;left:26.5%;top:7.5%;width:39%;height:71%;z-index:12;border-radius:30px;overflow:hidden;background:radial-gradient(circle at 52% 45%,rgba(18,30,48,.98),rgba(2,8,20,.96) 62%);border:2px solid rgba(56,223,255,.42);box-shadow:inset 0 0 90px rgba(56,223,255,.22),0 0 48px rgba(56,223,255,.24)}
-
-.flow{position:absolute;inset:0;z-index:8;pointer-events:none;mix-blend-mode:screen}.flow svg{width:100%;height:100%}.line{fill:none;stroke-linecap:round;stroke-width:4;stroke-dasharray:16 24;animation:dash 2s linear infinite;filter:drop-shadow(0 0 12px currentColor)}.c{stroke:var(--c);color:var(--c)}.o{stroke:var(--o);color:var(--o);animation-duration:1.45s}.v{stroke:var(--v);color:var(--v);animation-duration:2.35s}@keyframes dash{to{stroke-dashoffset:-80}}
-.badge,.status{position:absolute;z-index:20;padding:7px 10px;border-radius:999px;background:rgba(2,8,20,.78);border:1px solid rgba(56,223,255,.38);color:#c9f6ff;font-size:11px;letter-spacing:.11em;text-transform:uppercase}.badge{left:4%;top:4%}.status{left:4%;bottom:4%;border-radius:12px}
-.pulse{position:absolute;left:48%;top:42%;z-index:18;width:22px;height:22px;border-radius:50%;background:#dff8ff;box-shadow:0 0 28px var(--c);animation:pulse 1.4s infinite;pointer-events:none}@keyframes pulse{0%,100%{transform:scale(.7);opacity:.55}50%{transform:scale(1.25);opacity:1}}
-.toolbar{position:fixed;left:50%;top:16px;transform:translateX(-50%);z-index:40;display:flex;gap:9px;padding:8px;border-radius:16px;background:rgba(2,8,20,.78);border:1px solid rgba(125,211,252,.32);backdrop-filter:blur(12px)}button{cursor:pointer;border:1px solid rgba(125,211,252,.38);background:rgba(8,47,73,.78);color:#dff8ff;border-radius:12px;padding:9px 12px;font-weight:800;font-size:12px;letter-spacing:.05em}button:hover,button.active{background:linear-gradient(135deg,rgba(56,223,255,.34),rgba(192,132,252,.30))}
-.r3btn{position:fixed;left:18px;top:16px;z-index:45;background:linear-gradient(135deg,rgba(8,47,73,.96),rgba(88,28,135,.76));box-shadow:0 0 28px rgba(56,223,255,.25)}
-.r3panel{position:fixed;left:18px;top:66px;z-index:44;width:min(380px,calc(100vw - 36px));display:none;border-radius:18px;padding:14px;background:linear-gradient(180deg,rgba(2,8,20,.94),rgba(6,18,36,.82));border:1px solid rgba(56,223,255,.42);box-shadow:0 0 34px rgba(56,223,255,.18);backdrop-filter:blur(14px)}.r3panel.show{display:block}.r3panel h3{margin:0 0 8px;color:#9ef1ff;font-size:13px;letter-spacing:.13em;text-transform:uppercase}.r3panel p{margin:0;color:#b9c7d6;font-size:12px;line-height:1.42}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.pill{border:1px solid rgba(125,211,252,.25);border-radius:12px;padding:8px;background:rgba(8,47,73,.42);font-size:11px}.pill b{display:block;color:#fde68a;margin-bottom:3px}
-.ring{position:absolute;left:24.2%;top:6.1%;width:43%;height:73%;z-index:16;border:2px solid rgba(56,223,255,.58);border-radius:34px;box-shadow:0 0 45px rgba(56,223,255,.27),inset 0 0 45px rgba(192,132,252,.13);display:none;pointer-events:none}.ring.on{display:block;animation:r3 1.5s ease-in-out infinite}@keyframes r3{0%,100%{opacity:.55}50%{opacity:1}}
-.note{position:fixed;right:18px;bottom:16px;z-index:50;color:#fde68a;background:rgba(2,8,20,.72);border:1px solid rgba(245,158,11,.30);border-radius:12px;padding:8px 10px;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
-@media(max-width:900px){.toolbar{top:auto;bottom:16px;flex-wrap:wrap;justify-content:center}.heart3d{left:19%;top:8%;width:57%;height:58%}.r3panel{top:58px}}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MOU/R3 · Exploratory ECG 3D Viewer</title>
+  <meta name="description" content="Interactive exploratory ECG 3D viewer for MOU/R3 signal-dynamics visualization. Research only, not diagnostic." />
+  <style>
+    :root{--bg:#030712;--line:rgba(125,211,252,.22);--text:#eaf4ff;--muted:#9fb3ca;--cyan:#38dfff;--blue:#60a5fa;--violet:#c084fc;--orange:#f59e0b;--hot:#fb7185}
+    *{box-sizing:border-box}
+    html,body{width:100%;height:100%;margin:0;overflow:hidden;background:radial-gradient(circle at 50% 45%,rgba(14,165,233,.18),transparent 34rem),radial-gradient(circle at 76% 22%,rgba(192,132,252,.18),transparent 28rem),var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    #app{position:fixed;inset:0} canvas{display:block;width:100%;height:100%}
+    .hud{position:fixed;inset:0;pointer-events:none}
+    .panel{pointer-events:auto;position:absolute;border:1px solid var(--line);background:linear-gradient(180deg,rgba(15,23,42,.78),rgba(2,6,23,.56));backdrop-filter:blur(14px);box-shadow:0 24px 80px rgba(0,0,0,.42),inset 0 0 30px rgba(56,189,248,.035);border-radius:22px}
+    .top-left{top:24px;left:24px;width:min(430px,calc(100vw - 48px));padding:22px}.top-right{top:24px;right:24px;width:360px;padding:20px}.bottom-left{left:24px;bottom:58px;width:360px;padding:18px}.bottom-center{left:50%;transform:translateX(-50%);bottom:58px;width:min(690px,calc(100vw - 48px));padding:16px}.bottom-right{right:24px;bottom:58px;width:420px;padding:18px}
+    .badge{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid rgba(56,223,255,.35);border-radius:999px;color:#bfefff;background:rgba(56,223,255,.07);font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+    .title{font-size:46px;line-height:.92;letter-spacing:-.06em;margin:14px 0 12px}.title span{background:linear-gradient(90deg,var(--cyan),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .muted{color:var(--muted)}.small{font-size:13px}.rule{height:1px;background:linear-gradient(90deg,var(--cyan),transparent);margin:16px 0}
+    h2,h3{margin:0 0 10px}h2{font-size:20px;letter-spacing:.16em;text-transform:uppercase;color:#94e8ff}h3{font-size:14px;text-transform:uppercase;letter-spacing:.14em;color:#c8f6ff}
+    .legend{display:grid;gap:12px;margin-top:16px}.legend-row{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:13px}.dot{width:22px;height:22px;border-radius:999px;box-shadow:0 0 24px currentColor;border:1px solid currentColor}
+    .gradient-bar{width:12px;height:132px;border-radius:999px;background:linear-gradient(180deg,#fbbf24,#fb7185,#a855f7,#22d3ee);box-shadow:0 0 24px rgba(56,223,255,.35)}
+    .metric{display:grid;grid-template-columns:50px 1fr 94px;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid rgba(148,163,184,.16)}.metric:last-child{border-bottom:0}.metric-icon{width:44px;height:44px;border-radius:16px;border:1px solid rgba(255,255,255,.14);background:radial-gradient(circle at 50% 50%,currentColor,transparent 65%);opacity:.9}.metric strong{font-size:22px}
+    .bar{height:8px;border-radius:999px;background:rgba(148,163,184,.18);overflow:hidden}.bar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--cyan),var(--violet))}
+    .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.btn{cursor:pointer;border:1px solid rgba(148,211,252,.28);background:rgba(8,47,73,.5);color:#dff8ff;border-radius:12px;padding:10px 12px;font-weight:700;font-size:12px;letter-spacing:.05em}.btn:hover,.btn.active{background:linear-gradient(135deg,rgba(56,223,255,.32),rgba(192,132,252,.28));border-color:rgba(125,211,252,.62)}
+    .profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.profile-card{border:1px solid rgba(148,211,252,.18);border-radius:16px;padding:12px;background:rgba(2,6,23,.36)}.wave{height:54px;border-bottom:1px solid rgba(148,163,184,.2);position:relative;overflow:hidden}.wave svg{position:absolute;inset:0;width:100%;height:100%}
+    .disclaimer{position:fixed;left:24px;right:24px;bottom:14px;border:1px solid rgba(251,191,36,.25);background:rgba(251,191,36,.07);color:#fde68a;border-radius:14px;padding:10px 14px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;text-align:center}
+    .slider{display:flex;align-items:center;gap:14px}.track{height:2px;flex:1;background:linear-gradient(90deg,var(--cyan),rgba(148,163,184,.18));position:relative}.knob{position:absolute;top:50%;left:32%;width:14px;height:14px;border-radius:50%;background:#e0f2fe;box-shadow:0 0 18px var(--cyan);transform:translate(-50%,-50%)}.phase{display:grid;grid-template-columns:1fr 110px;gap:18px;align-items:center}.time{font-size:32px;color:#bdefff}
+    .mode-chip{position:fixed;top:50%;right:32px;transform:translateY(-50%);border:1px solid rgba(56,223,255,.38);border-radius:22px;padding:20px 22px;background:rgba(2,6,23,.54);text-align:center;box-shadow:0 0 40px rgba(56,223,255,.12)}.mode-chip b{display:block;font-size:58px;line-height:.9}.mode-chip span{display:block;color:var(--muted);font-size:12px;letter-spacing:.15em;text-transform:uppercase;margin-top:6px}
+    .asset-status{margin-top:12px;padding:10px 12px;border:1px solid rgba(125,211,252,.18);border-radius:12px;background:rgba(2,6,23,.36);font-size:12px;color:#bfefff}
+    @media(max-width:1150px){.top-right,.bottom-right,.bottom-left{display:none}.bottom-center{width:calc(100vw - 48px)}.mode-chip{display:none}.top-left{width:calc(100vw - 48px)}}@media(max-height:760px){.bottom-left,.bottom-right{display:none}.bottom-center{bottom:54px}.top-left{max-height:50vh;overflow:auto}.top-right{max-height:58vh;overflow:auto}}
+  </style>
 </head>
 <body>
-<div class="frame"><div class="gridbg"></div>
-  <div class="heart3d">
-    <span class="badge">3D viewport</span>
-    <svg class="heart-svg" id="heartSvg" viewBox="0 0 500 600" aria-label="Visualización 3D estilizada de corazón" role="img">
-<defs><radialGradient id="heartGrad" cx="45%" cy="35%"><stop offset="0" stop-color="#ff7898"/><stop offset=".5" stop-color="#bd3e68"/><stop offset="1" stop-color="#42152e"/></radialGradient><filter id="glow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
-<path class="heart-fill" filter="url(#glow)" d="M250 535 C224 500 92 402 70 285 C49 173 119 91 196 112 C232 122 250 153 250 153 C250 153 268 122 304 112 C381 91 451 173 430 285 C408 402 276 500 250 535Z"/>
-<path class="vessel c" d="M205 154 C190 103 198 62 222 28"/><path class="vessel o" d="M296 154 C311 103 303 62 279 28"/><path class="vessel v" d="M250 155 C250 112 250 70 250 34"/>
-<path d="M250 170 C206 218 190 283 210 354 C224 404 239 445 250 476 C261 445 276 404 290 354 C310 283 294 218 250 170Z" fill="rgba(7,20,35,.55)" stroke="#8defff" stroke-width="2" opacity=".8"/>
-<ellipse cx="205" cy="240" rx="46" ry="72" fill="rgba(56,223,255,.13)" stroke="#38dfff" stroke-width="2"/><ellipse cx="295" cy="240" rx="46" ry="72" fill="rgba(192,132,252,.13)" stroke="#c084fc" stroke-width="2"/>
-</svg>
-    <div class="flow"><svg viewBox="0 0 700 580"><path class="line c" d="M350 95 C300 150 245 190 230 260 C215 340 265 405 330 500"/><path class="line o" d="M350 120 C415 168 475 220 480 292 C486 375 432 440 365 508"/><path class="line v" d="M350 110 C332 200 345 280 315 350 C292 405 303 455 342 520"/></svg></div>
-    <span class="pulse"></span><span class="status" id="status">VISUALIZACIÓN LOCAL · sin recursos externos</span>
-  </div>
-  <div class="ring" id="ring"></div>
+<div id="app"></div>
+<div class="hud">
+  <section class="panel top-left">
+    <div class="badge">MOU/R3 · exploratory ECG results</div>
+    <div class="title">3D <span>Signal Contrast</span></div>
+    <p class="muted">Visualización interactiva de dinámica ECG. Representa contraste relativo de señal, no hallazgo anatómico ni diagnóstico.</p>
+    <div class="asset-status" id="assetStatus">Cargando modelo anatómico GLB...</div>
+    <div class="rule"></div>
+    <h2>Exploratory ECG Signal Contrast</h2>
+    <p class="muted small">Campo conceptual de diferencia dinámica entre perfil normal representativo y perfil patológico exploratorio.</p>
+    <div style="display:flex;gap:18px;align-items:center;margin-top:14px"><div class="gradient-bar"></div><div class="legend"><div class="legend-row"><span class="dot" style="color:var(--orange)"></span>Mayor diferencia dinámica</div><div class="legend-row"><span class="dot" style="color:var(--violet)"></span>Contraste intermedio</div><div class="legend-row"><span class="dot" style="color:var(--cyan)"></span>Menor diferencia relativa</div></div></div>
+    <div class="controls" id="profileControls"><button class="btn active" data-profile="contrast">Contraste</button><button class="btn" data-profile="normal">Normal</button><button class="btn" data-profile="pathological">Patológico</button></div>
+  </section>
+  <section class="panel top-right"><h2>Dynamic Pattern Separation</h2><p class="muted small">Vista relativa de diferencias en actividad eléctrica reconstruida. Uso exploratorio, no clínico.</p><div class="metric" style="color:var(--violet)"><div class="metric-icon"></div><div><strong>λ proxy</strong><div class="muted small">sensibilidad dinámica</div></div><div class="bar"><i style="width:78%"></i></div></div><div class="metric" style="color:var(--cyan)"><div class="metric-icon"></div><div><strong>D2</strong><div class="muted small">dimensión fractal</div></div><div class="bar"><i style="width:52%"></i></div></div><div class="metric" style="color:var(--blue)"><div class="metric-icon"></div><div><strong>LZ</strong><div class="muted small">complejidad</div></div><div class="bar"><i style="width:44%"></i></div></div><div class="metric" style="color:var(--orange)"><div class="metric-icon"></div><div><strong>TE</strong><div class="muted small">flujo informacional</div></div><div class="bar"><i style="width:82%"></i></div></div></section>
+  <section class="panel bottom-left"><h2>3D Orientation</h2><p class="muted small">Arrastrar: rotar · rueda: zoom · botón derecho: pan</p><div class="controls" id="viewControls"><button class="btn active" data-view="exterior">Exterior</button><button class="btn" data-view="cutaway">Cutaway</button><button class="btn" data-view="interior">Interior guiado</button></div></section>
+  <section class="panel bottom-center"><div class="phase"><div><h3>Time frame</h3><div class="slider"><span class="muted small">0 ms</span><div class="track"><span class="knob" id="knob"></span></div><span class="muted small">400 ms</span></div></div><div><h3>Current time</h3><div class="time" id="timeLabel">128 ms</div></div></div></section>
+  <section class="panel bottom-right"><h2>Profile comparison</h2><div class="profile-grid"><div class="profile-card"><h3>Normal profile</h3><div class="wave"><svg viewBox="0 0 220 70"><polyline fill="none" stroke="#38dfff" stroke-width="3" points="0,38 22,38 28,30 34,38 58,38 66,8 74,58 84,38 130,38 142,24 154,38 220,38"/></svg></div><p class="muted small">R3 0.75 · TE ≈ 0.052</p></div><div class="profile-card"><h3>Pathological profile</h3><div class="wave"><svg viewBox="0 0 220 70"><polyline fill="none" stroke="#c084fc" stroke-width="3" points="0,41 20,41 28,34 36,41 64,41 70,10 78,59 86,41 118,41 126,28 136,45 154,27 172,41 220,41"/></svg></div><p class="muted small">R3 0.50 · TE ≈ 0.180</p></div></div><p class="muted small">Los perfiles son ejemplos exploratorios MIT-BIH. Requieren auditoría biomédica externa.</p></section>
+  <div class="mode-chip"><b>R3</b><span>MOU/R3<br>Exploratory mode</span></div><div class="disclaimer">Exploratory research visualization only · Not a diagnostic device · Not for clinical decision-making</div>
 </div>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-<a class="back" href="index.html">← Volver a MOU</a>
-<button class="r3btn" id="r3btn">Leer R³ + MOU</button>
-<div class="r3panel" id="r3panel"><h3>R³ + MOU</h3><p>Presioná el botón para activar la lectura exploratoria.</p></div>
-
-<div class="toolbar">
-  <button id="ext">Exterior</button>
-  <button id="close3d">Acercar 3D</button>
-  <button id="rotate">Rotar OFF</button>
-  <button id="scan">Scan ON</button>
-</div>
-<div class="note">Research visualization only · not diagnostic</div>
-
-<script>
-const heart=document.getElementById('heartSvg'),r3btn=document.getElementById('r3btn'),panel=document.getElementById('r3panel'),ring=document.getElementById('ring');
-let rot=false,scan=true,r3=false;
-document.getElementById('ext').onclick=()=>heart.style.transform='scale(.92)';
-document.getElementById('close3d').onclick=()=>heart.style.transform='scale(1.12)';
-document.getElementById('rotate').onclick=e=>{rot=!rot;e.target.classList.toggle('active',rot);heart.classList.toggle('rot',rot);e.target.textContent=rot?'Rotar ON':'Rotar OFF'};
-document.getElementById('scan').onclick=e=>{scan=!scan;document.querySelector('.pulse').style.display=scan?'block':'none';e.target.textContent=scan?'Scan ON':'Scan OFF'};
-r3btn.onclick=()=>{r3=!r3;r3btn.classList.toggle('active',r3);panel.classList.toggle('show',r3);ring.classList.toggle('on',r3);panel.innerHTML=r3?'<h3>Lectura R³ asistida por MOU</h3><p>R³ observa co-estabilización, contraste dinámico y distancia de observación. MOU separa lentes métricos sin voto mayoritario ni diagnóstico.</p><div class="grid"><div class="pill"><b>λ proxy</b>sensibilidad dinámica</div><div class="pill"><b>D₂</b>geometría/fractalidad</div><div class="pill"><b>LZ</b>complejidad simbólica</div><div class="pill"><b>TE</b>flujo informacional</div></div>':'<h3>R³ + MOU</h3><p>Activá la lectura exploratoria para superponer la zona de observabilidad.</p>'};
+const MODEL_URL = './models/heart.glb';
+const assetStatus = document.getElementById('assetStatus');
+const app = document.getElementById('app');
+const scene = new THREE.Scene(); scene.fog = new THREE.FogExp2(0x030712,0.035);
+const camera = new THREE.PerspectiveCamera(45,innerWidth/innerHeight,0.01,100); camera.position.set(0,1.2,7.2);
+const renderer = new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'high-performance'}); renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.setSize(innerWidth,innerHeight); renderer.localClippingEnabled=true; renderer.outputColorSpace=THREE.SRGBColorSpace; app.appendChild(renderer.domElement);
+const controls = new OrbitControls(camera,renderer.domElement); controls.enableDamping=true; controls.dampingFactor=.055; controls.target.set(0,.35,0); controls.maxDistance=11; controls.minDistance=.35;
+const clock = new THREE.Clock(); let viewMode='exterior';
+scene.add(new THREE.AmbientLight(0x7dd3fc,.38)); const key=new THREE.DirectionalLight(0xffffff,2.25); key.position.set(4,5,5); scene.add(key); const rim=new THREE.PointLight(0x38dfff,25,18); rim.position.set(-3,1.5,3); scene.add(rim); const purple=new THREE.PointLight(0xc084fc,18,12); purple.position.set(3,0,2); scene.add(purple);
+const clippingPlane = new THREE.Plane(new THREE.Vector3(-1,0,0),10);
+const heartGroup = new THREE.Group(); const organGroup = new THREE.Group(); const signalGroup = new THREE.Group(); heartGroup.add(organGroup,signalGroup); scene.add(heartGroup);
+const matBlue = new THREE.MeshBasicMaterial({color:0x38dfff,transparent:true,opacity:.78,blending:THREE.AdditiveBlending,depthWrite:false}); const matViolet = new THREE.MeshBasicMaterial({color:0xc084fc,transparent:true,opacity:.62,blending:THREE.AdditiveBlending,depthWrite:false}); const matOrange = new THREE.MeshBasicMaterial({color:0xf59e0b,transparent:true,opacity:.62,blending:THREE.AdditiveBlending,depthWrite:false});
+function fitModelToScene(root){const box=new THREE.Box3().setFromObject(root); const size=new THREE.Vector3(); const center=new THREE.Vector3(); box.getSize(size); box.getCenter(center); root.position.sub(center); const maxAxis=Math.max(size.x,size.y,size.z)||1; root.scale.setScalar(3.25/maxAxis);}
+function createFallback(){assetStatus.textContent='No se encontró /models/heart.glb: usando corazón procedural de respaldo.'; const matHeart = new THREE.MeshPhysicalMaterial({color:0x7d2d61,roughness:.38,metalness:.05,transparent:true,opacity:.9,clearcoat:.35,clippingPlanes:[clippingPlane]}); function s(color,pos,scale){const m=matHeart.clone();m.color.set(color);const mesh=new THREE.Mesh(new THREE.SphereGeometry(1,64,48),m);mesh.position.set(...pos);mesh.scale.set(...scale);organGroup.add(mesh);} s(0x7d2d61,[-.58,-.18,.02],[.88,1.38,.72]);s(0x2b6aa6,[.48,-.18,.08],[.78,1.18,.62]);s(0x965a82,[-.42,.88,-.08],[.55,.48,.48]);s(0x365e9d,[.46,.72,-.04],[.58,.48,.46]);s(0x54267f,[-.05,-1.42,.0],[.72,.38,.5]);}
+function loadHeart(){new GLTFLoader().load(MODEL_URL,(gltf)=>{organGroup.clear(); const model=gltf.scene; fitModelToScene(model); model.traverse((obj)=>{if(obj.isMesh){obj.material = new THREE.MeshPhysicalMaterial({color:0x8b3a63,roughness:.42,metalness:.03,clearcoat:.42,transparent:true,opacity:.93,clippingPlanes:[clippingPlane]});}}); organGroup.add(model); assetStatus.textContent='Modelo anatómico GLB activo: /models/heart.glb';},undefined,createFallback);}
+function makeCurve(points,mat,radius=.018){const curve=new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(...p))); const tube=new THREE.Mesh(new THREE.TubeGeometry(curve,96,radius,10,false),mat); signalGroup.add(tube); return {curve,tube};}
+const curves=[]; curves.push(makeCurve([[0,.72,.4],[-.45,.35,.48],[-.8,-.25,.42],[-.58,-.82,.34],[-.12,-1.25,.25]],matBlue,.015)); curves.push(makeCurve([[0,.72,.42],[.38,.28,.48],[.78,-.18,.35],[.58,-.82,.28],[.1,-1.22,.25]],matOrange,.018)); curves.push(makeCurve([[-.12,.86,.48],[-.28,.3,.6],[-.36,-.35,.58],[-.16,-.95,.48]],matViolet,.02)); curves.push(makeCurve([[.08,.76,.5],[.2,.28,.64],[.24,-.25,.62],[.1,-.92,.5]],matBlue,.014));
+const pulses=[]; for(const c of curves){for(let i=0;i<3;i++){const p=new THREE.Mesh(new THREE.SphereGeometry(.055,20,20),new THREE.MeshBasicMaterial({color:c.tube.material.color,transparent:true,opacity:.95,blending:THREE.AdditiveBlending})); signalGroup.add(p); pulses.push({mesh:p,curve:c.curve,offset:i/3,speed:.12+Math.random()*.06});}}
+const halos=[]; function halo(pos,color,scale){const h=new THREE.Mesh(new THREE.SphereGeometry(1,48,32),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.13,blending:THREE.AdditiveBlending,depthWrite:false})); h.position.set(...pos); h.scale.set(...scale); signalGroup.add(h); halos.push(h);} halo([.58,-.2,.42],0xf59e0b,[.55,.75,.25]); halo([-.56,-.05,.45],0xc084fc,[.65,.78,.25]); halo([.02,.45,.55],0x38dfff,[.42,.42,.22]);
+const grid=new THREE.GridHelper(8,32,0x0ea5e9,0x0ea5e9); grid.material.transparent=true; grid.material.opacity=.12; grid.position.y=-1.75; scene.add(grid);
+function setProfile(p){document.querySelectorAll('[data-profile]').forEach(b=>b.classList.toggle('active',b.dataset.profile===p)); const normal=p==='normal',path=p==='pathological',contrast=p==='contrast'; matOrange.opacity=path||contrast?.72:.18; matViolet.opacity=contrast?.62:.22; matBlue.opacity=normal||contrast?.78:.32; halos[0].material.opacity=path||contrast?.18:.04; halos[1].material.opacity=contrast?.15:.05; halos[2].material.opacity=normal||contrast?.12:.05;}
+function setView(v){viewMode=v; document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v)); if(v==='exterior')clippingPlane.constant=10; if(v==='cutaway')clippingPlane.constant=.08; if(v==='interior')clippingPlane.constant=.16;}
+document.getElementById('profileControls').addEventListener('click',e=>{if(e.target.dataset.profile)setProfile(e.target.dataset.profile);}); document.getElementById('viewControls').addEventListener('click',e=>{if(e.target.dataset.view)setView(e.target.dataset.view);});
+loadHeart(); setProfile('contrast'); setView('exterior');
+function animate(){const t=clock.getElapsedTime(); const beat=1+Math.sin(t*5.4)*.018; heartGroup.scale.set(beat,beat,beat); heartGroup.rotation.y+=.0012; halos.forEach((h,i)=>{h.rotation.y+=.004;}); pulses.forEach(p=>{const u=(t*p.speed+p.offset)%1; p.mesh.position.copy(p.curve.getPointAt(u)); p.mesh.material.opacity=.35+.65*Math.sin(u*Math.PI);}); if(viewMode==='interior'){const a=t*.28;camera.position.lerp(new THREE.Vector3(Math.sin(a)*.55,.2+Math.sin(t*.8)*.15,.82+Math.cos(a)*.3),.018);controls.target.lerp(new THREE.Vector3(Math.sin(a)*.25,.12+Math.sin(t*.7)*.08,.35+Math.cos(a)*.22),.018);} else if(viewMode==='cutaway'){camera.position.lerp(new THREE.Vector3(2.2,1.05,4.2),.012);controls.target.lerp(new THREE.Vector3(.05,.2,0),.012);} const ms=Math.round(((t*.55)%1)*400);document.getElementById('timeLabel').textContent=ms+' ms';document.getElementById('knob').style.left=(ms/400*100)+'%';controls.update();renderer.render(scene,camera);requestAnimationFrame(animate);} animate();
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);});
 </script>
 </body>
 </html>
