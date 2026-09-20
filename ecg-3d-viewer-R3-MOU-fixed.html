@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MOU/R3 · ECG dashboard</title>
+<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+<style>
+:root{--c:#38dfff;--v:#c084fc;--o:#f59e0b;--b:#020814}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--b);font-family:Inter,system-ui,Segoe UI,sans-serif;color:#eaf4ff}
+.frame{position:fixed;inset:0;background:#020814;overflow:hidden}.base{position:absolute;left:50%;top:50%;width:100vw;height:100vh;object-fit:contain;transform:translate(-50%,-50%)}
+.heart3d{position:absolute;left:26.5%;top:7.5%;width:39%;height:71%;z-index:12;border-radius:30px;overflow:hidden;background:radial-gradient(circle at 52% 45%,rgba(18,30,48,.98),rgba(2,8,20,.96) 62%);border:2px solid rgba(56,223,255,.42);box-shadow:inset 0 0 90px rgba(56,223,255,.22),0 0 48px rgba(56,223,255,.24)}
+model-viewer{position:absolute;inset:-12% -10%;width:120%;height:124%;z-index:5;background:transparent;--poster-color:transparent;pointer-events:auto;touch-action:none;cursor:grab;filter:drop-shadow(0 0 44px rgba(56,223,255,.62)) drop-shadow(0 0 25px rgba(245,158,11,.30))}
+.flow{position:absolute;inset:0;z-index:8;pointer-events:none;mix-blend-mode:screen}.flow svg{width:100%;height:100%}.line{fill:none;stroke-linecap:round;stroke-width:4;stroke-dasharray:16 24;animation:dash 2s linear infinite;filter:drop-shadow(0 0 12px currentColor)}.c{stroke:var(--c);color:var(--c)}.o{stroke:var(--o);color:var(--o);animation-duration:1.45s}.v{stroke:var(--v);color:var(--v);animation-duration:2.35s}@keyframes dash{to{stroke-dashoffset:-80}}
+.badge,.status{position:absolute;z-index:20;padding:7px 10px;border-radius:999px;background:rgba(2,8,20,.78);border:1px solid rgba(56,223,255,.38);color:#c9f6ff;font-size:11px;letter-spacing:.11em;text-transform:uppercase}.badge{left:4%;top:4%}.status{left:4%;bottom:4%;border-radius:12px}
+.pulse{position:absolute;left:48%;top:42%;z-index:18;width:22px;height:22px;border-radius:50%;background:#dff8ff;box-shadow:0 0 28px var(--c);animation:pulse 1.4s infinite;pointer-events:none}@keyframes pulse{0%,100%{transform:scale(.7);opacity:.55}50%{transform:scale(1.25);opacity:1}}
+.toolbar{position:fixed;left:50%;top:16px;transform:translateX(-50%);z-index:40;display:flex;gap:9px;padding:8px;border-radius:16px;background:rgba(2,8,20,.78);border:1px solid rgba(125,211,252,.32);backdrop-filter:blur(12px)}button{cursor:pointer;border:1px solid rgba(125,211,252,.38);background:rgba(8,47,73,.78);color:#dff8ff;border-radius:12px;padding:9px 12px;font-weight:800;font-size:12px;letter-spacing:.05em}button:hover,button.active{background:linear-gradient(135deg,rgba(56,223,255,.34),rgba(192,132,252,.30))}
+.r3btn{position:fixed;left:18px;top:16px;z-index:45;background:linear-gradient(135deg,rgba(8,47,73,.96),rgba(88,28,135,.76));box-shadow:0 0 28px rgba(56,223,255,.25)}
+.r3panel{position:fixed;left:18px;top:66px;z-index:44;width:min(380px,calc(100vw - 36px));display:none;border-radius:18px;padding:14px;background:linear-gradient(180deg,rgba(2,8,20,.94),rgba(6,18,36,.82));border:1px solid rgba(56,223,255,.42);box-shadow:0 0 34px rgba(56,223,255,.18);backdrop-filter:blur(14px)}.r3panel.show{display:block}.r3panel h3{margin:0 0 8px;color:#9ef1ff;font-size:13px;letter-spacing:.13em;text-transform:uppercase}.r3panel p{margin:0;color:#b9c7d6;font-size:12px;line-height:1.42}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.pill{border:1px solid rgba(125,211,252,.25);border-radius:12px;padding:8px;background:rgba(8,47,73,.42);font-size:11px}.pill b{display:block;color:#fde68a;margin-bottom:3px}
+.ring{position:absolute;left:24.2%;top:6.1%;width:43%;height:73%;z-index:16;border:2px solid rgba(56,223,255,.58);border-radius:34px;box-shadow:0 0 45px rgba(56,223,255,.27),inset 0 0 45px rgba(192,132,252,.13);display:none;pointer-events:none}.ring.on{display:block;animation:r3 1.5s ease-in-out infinite}@keyframes r3{0%,100%{opacity:.55}50%{opacity:1}}
+.note{position:fixed;right:18px;bottom:16px;z-index:50;color:#fde68a;background:rgba(2,8,20,.72);border:1px solid rgba(245,158,11,.30);border-radius:12px;padding:8px 10px;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+@media(max-width:900px){.toolbar{top:auto;bottom:16px;flex-wrap:wrap;justify-content:center}.heart3d{left:19%;top:8%;width:57%;height:58%}.r3panel{top:58px}}
+</style>
+</head>
+<body>
+<div class="frame">
+  <img class="base" src="assets/mou-r3-ecg-dashboard-exact.png" alt="MOU/R3 dashboard">
+  <div class="heart3d">
+    <span class="badge">3D viewport</span>
+    <model-viewer id="heart" src="models/heart.glb" camera-controls interaction-prompt="none" exposure="1.18" shadow-intensity=".85" camera-orbit="35deg 72deg 4.2m" min-camera-orbit="auto auto 1.1m" max-camera-orbit="auto auto 8m" alt="Corazón 3D"></model-viewer>
+    <div class="flow"><svg viewBox="0 0 700 580"><path class="line c" d="M350 95 C300 150 245 190 230 260 C215 340 265 405 330 500"/><path class="line o" d="M350 120 C415 168 475 220 480 292 C486 375 432 440 365 508"/><path class="line v" d="M350 110 C332 200 345 280 315 350 C292 405 303 455 342 520"/></svg></div>
+    <span class="pulse"></span><span class="status" id="status">GLB cargando...</span>
+  </div>
+  <div class="ring" id="ring"></div>
+</div>
+
+<button class="r3btn" id="r3btn">Leer R³ + MOU</button>
+<div class="r3panel" id="r3panel"><h3>R³ + MOU</h3><p>Presioná el botón para activar la lectura exploratoria.</p></div>
+
+<div class="toolbar">
+  <button id="ext">Exterior</button>
+  <button id="close3d">Acercar 3D</button>
+  <button id="rotate">Rotar OFF</button>
+  <button id="scan">Scan ON</button>
+</div>
+<div class="note">Research visualization only · not diagnostic</div>
+
+<script>
+const mv=document.getElementById('heart'),status=document.getElementById('status');
+const r3btn=document.getElementById('r3btn'),r3panel=document.getElementById('r3panel'),ring=document.getElementById('ring');
+let rot=false,scan=true,r3=false;
+mv.addEventListener('load',()=>status.textContent='GLB cargado · arrastrá el corazón');
+mv.addEventListener('error',()=>status.textContent='ERROR GLB · revisar models/heart.glb');
+document.getElementById('ext').onclick=()=>mv.cameraOrbit='35deg 72deg 4.2m';
+document.getElementById('close3d').onclick=()=>mv.cameraOrbit='20deg 68deg 2.15m';
+document.getElementById('rotate').onclick=e=>{rot=!rot;e.target.classList.toggle('active',rot);if(rot){mv.setAttribute('auto-rotate','');mv.rotationPerSecond='18deg';e.target.textContent='Rotar ON'}else{mv.removeAttribute('auto-rotate');mv.autoRotate=false;mv.rotationPerSecond='0deg';e.target.textContent='Rotar OFF'}};
+document.getElementById('scan').onclick=e=>{scan=!scan;document.querySelector('.pulse').style.display=scan?'block':'none';e.target.textContent=scan?'Scan ON':'Scan OFF'};
+r3btn.onclick=()=>{r3=!r3;r3btn.classList.toggle('active',r3);r3panel.classList.toggle('show',r3);ring.classList.toggle('on',r3);r3panel.innerHTML=r3?'<h3>Lectura R³ asistida por MOU</h3><p>R³ observa co-estabilización, contraste dinámico y distancia de observación. MOU separa lentes métricos sin voto mayoritario ni diagnóstico.</p><div class="grid"><div class="pill"><b>λ proxy</b>sensibilidad dinámica</div><div class="pill"><b>D₂</b>geometría/fractalidad</div><div class="pill"><b>LZ</b>complejidad simbólica</div><div class="pill"><b>TE</b>flujo informacional</div></div>':'<h3>R³ + MOU</h3><p>Presioná el botón para activar la lectura exploratoria.</p>'};
+</script>
+</body>
+</html>

@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="MOU — Marco de Observabilidad Útil para Sistemas Dinámicos. Web interactiva con simuladores 3D, laboratorio visual, DOI y zonas de observabilidad para CWRU, ECG y EEG." />
+  <meta name="author" content="Sergio Emanuel Duarte Belén" />
+  <meta property="og:title" content="MOU | Marco de Observabilidad Útil" />
+  <meta property="og:description" content="Hipótesis metodológica sobre observabilidad útil dependiente de escala en sistemas dinámicos. Incluye simuladores 3D, laboratorio visual, DOI y aplicaciones exploratorias sobre CWRU, ECG y EEG." />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#07070d" />
+  <title>MOU — Marco de Observabilidad Útil</title>
+  <link rel="preconnect" href="https://cdn.plot.ly" />
+  <style>
+:root{--bg:#07070d;--panel:#10111a;--panel2:#0b0c13;--ink:#eef2ff;--muted:#9aa4b2;--accent:#8b7cff;--cyan:#38dfff;--green:#6ee7b7;--amber:#f59e0b;--red:#fb7185;--line:rgba(255,255,255,.09)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 70% 0%,#16152a 0,#07070d 38%,#050509 100%);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.55}a{color:inherit}.topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:14px 5vw;background:rgba(7,7,13,.86);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}.brand{display:flex;gap:12px;align-items:center;text-decoration:none}.brand strong{font-size:25px;letter-spacing:-.06em}.brand span{font-size:11px;color:var(--muted);line-height:1.25}.nav{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.nav a,.button{padding:9px 13px;border:1px solid var(--line);border-radius:999px;text-decoration:none;font-size:12px}.nav a:hover,.button:hover{border-color:rgba(139,124,255,.55);background:rgba(139,124,255,.1)}.menu-button{display:none}.grid,.section{max-width:1180px;margin:auto}.hero{padding:90px 5vw 70px;min-height:600px;display:grid;align-items:center}.eyebrow{color:var(--cyan);font-size:11px;text-transform:uppercase;letter-spacing:.14em;font-weight:800}.hero h1{font-size:clamp(46px,7vw,86px);line-height:.98;letter-spacing:-.065em;max-width:950px;margin:20px 0}.hero h1 span{color:var(--accent)}.lead{font-size:19px;color:#c8ceda;max-width:850px}.doi-strip{display:inline-flex;gap:14px;align-items:center;margin:28px 0;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.025);font-size:12px}.doi-strip a{color:var(--green)}.result-row,.cards{display:grid;gap:14px}.result-row{grid-template-columns:repeat(3,1fr);max-width:800px}.result-block,.card,.chart-card,.claim,.info-box{border:1px solid var(--line);background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.018));border-radius:18px;padding:18px}.result-val{display:block;font-size:25px;font-weight:900}.result-lbl{display:block;color:var(--muted);font-size:11px}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.button.primary{background:linear-gradient(135deg,#6f5cff,#9b8fff);border-color:transparent;color:#fff;font-weight:800}.button.ghost{background:rgba(255,255,255,.025)}.section{padding:80px 5vw}.section-head{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:end;margin-bottom:30px}.section h2{font-size:clamp(30px,4vw,54px);line-height:1.02;letter-spacing:-.045em;margin:8px 0}.section p{color:#b7bfcc}.cards.three{grid-template-columns:repeat(3,1fr)}.focus{max-width:1280px}.focus .card{min-height:150px}.claim{margin-top:18px;color:#cbd5e1}.claim strong{color:#fff}.chart{height:380px}.chart-card{overflow:hidden}.toolbar{display:flex;gap:14px;align-items:center;margin-bottom:12px;color:var(--muted);font-size:12px}.toolbar input{accent-color:var(--accent);width:180px}.section.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.section.grid>.section-head{grid-column:1/-1}.muted{opacity:.95}.trace{padding-bottom:110px}.closing{text-align:center;font-size:18px;color:#8f86ff!important;font-weight:800;margin-top:55px}.footer{padding:25px 5vw;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:20px;color:#707887;font-size:11px}.cwru-observability-feature{border-top:1px solid rgba(245,158,11,.22)}.ecg-observability-feature{border-top:1px solid rgba(56,223,255,.22)}.eeg-observability-feature{border-top:1px solid rgba(192,132,252,.22)}.eeg-primary{border-color:rgba(192,132,252,.4)!important;color:#ddd0ff}.eeg-badge{display:inline-block;padding:5px 8px;border-radius:999px;background:rgba(192,132,252,.12);color:#d8c7ff;font-size:10px;text-transform:uppercase;letter-spacing:.08em}.glow{position:fixed;width:320px;height:320px;border-radius:50%;filter:blur(100px);opacity:.12;pointer-events:none}.glow-a{background:#6d5cff;top:10%;right:-100px}.glow-b{background:#16c1ff;bottom:10%;left:-140px}@media(max-width:850px){.nav{display:none}.menu-button{display:block;background:none;border:1px solid var(--line);color:#fff;border-radius:10px;padding:8px}.result-row,.cards.three,.section.grid,.section-head{grid-template-columns:1fr}.hero{padding-top:55px}.hero h1{font-size:52px}.section{padding:55px 5vw}.chart{height:300px}.footer{flex-direction:column}}
+</style>
+  <style>
+    .nav .nav-cwru-observability,
+    .nav .nav-ecg-observability,
+    .nav .nav-eeg-observability{
+      position:relative;
+      font-weight:950;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      padding:.58rem .78rem;
+      border-radius:999px;
+    }
+
+    .nav .nav-cwru-observability{
+      color:#fff8ec !important;
+      border:1px solid rgba(245,158,11,.55);
+      background:linear-gradient(135deg,rgba(180,83,9,.34),rgba(245,158,11,.30) 48%,rgba(234,88,12,.30));
+      box-shadow:0 0 0 1px rgba(255,255,255,.06) inset,0 0 24px rgba(245,158,11,.25),0 0 40px rgba(234,88,12,.12);
+    }
+    .nav .nav-cwru-observability::before{
+      content:"";position:absolute;inset:-3px;z-index:-1;border-radius:999px;
+      background:linear-gradient(90deg,rgba(245,158,11,.75),rgba(234,88,12,.55),rgba(251,191,36,.65));filter:blur(10px);opacity:.55;
+    }
+    .cwru-observability-feature{
+      position:relative;overflow:hidden;border:1px solid rgba(245,158,11,.24);
+      background:radial-gradient(circle at 20% 20%,rgba(245,158,11,.18),transparent 34%),radial-gradient(circle at 85% 15%,rgba(234,88,12,.16),transparent 30%),linear-gradient(135deg,rgba(2,8,23,.92),rgba(73,35,8,.62));
+      box-shadow:0 24px 90px rgba(0,0,0,.30),0 0 44px rgba(245,158,11,.10);
+    }
+    .cwru-observability-feature::after{content:"CWRU";position:absolute;right:24px;top:10px;font-size:84px;font-weight:1000;letter-spacing:-.08em;color:rgba(255,248,236,.045);pointer-events:none;}
+    .cwru-badge{display:inline-flex;align-items:center;gap:.45rem;color:#fff8ec;border:1px solid rgba(245,158,11,.38);background:rgba(180,83,9,.20);border-radius:999px;padding:.42rem .72rem;font-weight:950;letter-spacing:.12em;text-transform:uppercase;box-shadow:0 0 28px rgba(245,158,11,.12);}
+    .cwru-title-accent{color:#fbbf24;text-shadow:0 0 18px rgba(245,158,11,.28);}
+    .cwru-observability-feature .button.cwru-primary{color:#07111f;background:linear-gradient(135deg,#fbbf24,#f97316 55%,#ef4444);border:0;font-weight:950;letter-spacing:.04em;box-shadow:0 18px 44px rgba(245,158,11,.22);}
+    .cwru-warning-strip{margin-top:1rem;display:flex;flex-wrap:wrap;gap:.55rem;}
+    .cwru-warning-strip span{border:1px solid rgba(245,158,11,.30);background:rgba(120,53,15,.22);color:#fde68a;border-radius:999px;padding:.42rem .65rem;font-size:.78rem;font-weight:850;}
+
+    .nav .nav-ecg-observability{
+      color:#ecfeff !important;
+      border:1px solid rgba(34,211,238,.55);
+      background:linear-gradient(135deg,rgba(8,145,178,.34),rgba(124,58,237,.30) 48%,rgba(244,63,94,.30));
+      box-shadow:0 0 0 1px rgba(255,255,255,.06) inset,0 0 24px rgba(34,211,238,.25),0 0 40px rgba(244,63,94,.12);
+    }
+    .nav .nav-ecg-observability::before{content:"";position:absolute;inset:-3px;z-index:-1;border-radius:999px;background:linear-gradient(90deg,rgba(34,211,238,.75),rgba(124,58,237,.55),rgba(244,63,94,.65));filter:blur(10px);opacity:.55;}
+    .ecg-observability-feature{position:relative;overflow:hidden;border:1px solid rgba(34,211,238,.24);background:radial-gradient(circle at 20% 20%,rgba(34,211,238,.18),transparent 34%),radial-gradient(circle at 85% 15%,rgba(244,63,94,.16),transparent 30%),linear-gradient(135deg,rgba(2,8,23,.92),rgba(8,47,73,.62));box-shadow:0 24px 90px rgba(0,0,0,.30),0 0 44px rgba(34,211,238,.10);}
+    .ecg-observability-feature::after{content:"ECG";position:absolute;right:24px;top:10px;font-size:104px;font-weight:1000;letter-spacing:-.08em;color:rgba(236,254,255,.045);pointer-events:none;}
+    .ecg-badge{display:inline-flex;align-items:center;gap:.45rem;color:#ecfeff;border:1px solid rgba(34,211,238,.38);background:rgba(8,145,178,.20);border-radius:999px;padding:.42rem .72rem;font-weight:950;letter-spacing:.12em;text-transform:uppercase;box-shadow:0 0 28px rgba(34,211,238,.12);}
+    .ecg-title-accent{color:#67e8f9;text-shadow:0 0 18px rgba(34,211,238,.28);}
+    .ecg-observability-feature .button.ecg-primary,.actions .button.ecg-primary{color:#07111f;background:linear-gradient(135deg,#67e8f9,#a78bfa 55%,#fb7185);border:0;font-weight:950;letter-spacing:.04em;box-shadow:0 18px 44px rgba(34,211,238,.22);}
+    .ecg-warning-strip{margin-top:1rem;display:flex;flex-wrap:wrap;gap:.55rem;}
+    .ecg-warning-strip span{border:1px solid rgba(251,191,36,.30);background:rgba(120,53,15,.22);color:#fde68a;border-radius:999px;padding:.42rem .65rem;font-size:.78rem;font-weight:850;}
+
+    .nav .nav-eeg-observability{
+      color:#f0fdf4 !important;
+      border:1px solid rgba(132,204,22,.58);
+      background:linear-gradient(135deg,rgba(22,101,52,.38),rgba(132,204,22,.30) 48%,rgba(20,184,166,.30));
+      box-shadow:0 0 0 1px rgba(255,255,255,.06) inset,0 0 24px rgba(132,204,22,.26),0 0 40px rgba(20,184,166,.13);
+    }
+    .nav .nav-eeg-observability::before{content:"";position:absolute;inset:-3px;z-index:-1;border-radius:999px;background:linear-gradient(90deg,rgba(132,204,22,.76),rgba(20,184,166,.56),rgba(74,222,128,.68));filter:blur(10px);opacity:.58;}
+    .eeg-observability-feature{position:relative;overflow:hidden;border:1px solid rgba(132,204,22,.26);background:radial-gradient(circle at 18% 18%,rgba(132,204,22,.18),transparent 34%),radial-gradient(circle at 86% 16%,rgba(20,184,166,.18),transparent 30%),linear-gradient(135deg,rgba(2,8,23,.94),rgba(20,83,45,.58));box-shadow:0 24px 90px rgba(0,0,0,.30),0 0 46px rgba(132,204,22,.11);}
+    .eeg-observability-feature::after{content:"EEG";position:absolute;right:24px;top:10px;font-size:110px;font-weight:1000;letter-spacing:-.08em;color:rgba(240,253,244,.050);pointer-events:none;}
+    .eeg-badge{display:inline-flex;align-items:center;gap:.45rem;color:#f0fdf4;border:1px solid rgba(132,204,22,.40);background:rgba(22,101,52,.24);border-radius:999px;padding:.42rem .72rem;font-weight:950;letter-spacing:.12em;text-transform:uppercase;box-shadow:0 0 28px rgba(132,204,22,.13);}
+    .eeg-title-accent{color:#bef264;text-shadow:0 0 18px rgba(132,204,22,.30);}
+    .eeg-observability-feature .button.eeg-primary,.actions .button.eeg-primary{color:#052e16;background:linear-gradient(135deg,#bef264,#34d399 55%,#22d3ee);border:0;font-weight:950;letter-spacing:.04em;box-shadow:0 18px 44px rgba(132,204,22,.22);}
+    .eeg-warning-strip{margin-top:1rem;display:flex;flex-wrap:wrap;gap:.55rem;}
+    .eeg-warning-strip span{border:1px solid rgba(132,204,22,.31);background:rgba(20,83,45,.24);color:#d9f99d;border-radius:999px;padding:.42rem .65rem;font-size:.78rem;font-weight:850;}
+  </style>
+</head>
+<body>
+  <div class="glow glow-a"></div>
+  <div class="glow glow-b"></div>
+
+  <header class="topbar">
+    <a class="brand" href="#inicio">
+      <strong>MOU</strong>
+      <span>Marco de Observabilidad Útil<br />para sistemas dinámicos</span>
+    </a>
+    <button class="menu-button" id="menuButton" aria-label="Abrir menú">☰</button>
+    <nav class="nav" id="mainNav">
+      <a href="#idea">Hipótesis</a>
+      <a href="#cwru">CWRU</a>
+      <a href="#ecg-observability">ECG</a>
+      <a href="#eeg-observability">EEG</a>
+      <a href="#demo">Demo 3D</a>
+      <a class="nav-cwru-observability" href="#cwru">CWRU Observability</a>
+      <a class="nav-ecg-observability" href="ecg-3d-viewer-R3-MOU-fixed.html">ECG Observability</a>
+      <a class="nav-eeg-observability" href="#eeg-observability">EEG Observability</a>
+      <a href="#metricas">Métricas</a>
+      <a href="#embedding">Embedding</a>
+      <a href="#controles">Controles</a>
+      <a href="#trazabilidad">Trazabilidad</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="inicio" class="hero grid">
+      <div>
+        <p class="eyebrow">Framework exploratorio · web interactiva v4.2</p>
+        <h1>La distancia correcta revela la <span>información útil</span>.</h1>
+        <p class="lead">MOU estudia cuándo una señal dinámica se vuelve legible para un observador. No reemplaza las métricas clásicas: las integra como lentes para leer información, estructura, sensibilidad, complejidad y control nulo.</p>
+
+        <div class="doi-strip" aria-label="DOI del paquete reproducible">
+          <span>DOI / paquete reproducible</span>
+          <a href="https://doi.org/10.5281/zenodo.20482755" target="_blank" rel="noopener">10.5281/zenodo.20482755</a>
+        </div>
+
+        <div class="result-row hero-evidence" aria-label="Resumen técnico preliminar">
+          <article class="result-block strong"><span class="result-val accent">CWRU</span><span class="result-lbl">Dataset externo industrial</span></article>
+          <article class="result-block"><span class="result-val green">ECG</span><span class="result-lbl">Señal fisiológica exploratoria</span></article>
+          <article class="result-block"><span class="result-val">EEG</span><span class="result-lbl">Nueva zona neurodinámica anclada</span></article>
+        </div>
+
+        <div class="actions">
+          <a class="button primary" href="https://doi.org/10.5281/zenodo.20482755" target="_blank" rel="noopener">Ver Zenodo</a>
+          <a class="button ghost" href="#cwru">Ver CWRU</a>
+          <a class="button ghost" href="#ecg-observability">Ver ECG</a>
+          <a class="button eeg-primary" href="#eeg-observability">Ver EEG</a>
+          <a class="button ghost" href="mou-lab.html">Abrir laboratorio</a>
+        </div>
+
+        <div class="claim hero-claim"><strong>Claim actual:</strong> evidencia exploratoria trazable; no validación definitiva.</div>
+      </div>
+
+      <div class="hero-panel">
+        <article class="obs red"><h3>Muy cerca</h3><div class="dots noisy"></div><p>Saturación, exceso de detalle, ruido aparente.</p></article>
+        <article class="obs good"><h3>Zona útil</h3><svg viewBox="0 0 320 180" role="img" aria-label="Curvas dinámicas en zona útil"><path d="M160,90 C128,16 30,34 42,103 C56,178 137,150 160,90 C184,28 288,28 276,101 C264,174 183,150 160,90"/><path d="M160,90 C138,46 72,54 76,101 C80,143 137,128 160,90 C181,49 248,54 244,102 C240,143 181,128 160,90"/></svg><p>Estructura legible e información útil.</p></article>
+        <article class="obs violet"><h3>Muy lejos</h3><div class="dots sparse"></div><p>Se pierde detalle, relación dinámica y especificidad.</p></article>
+      </div>
+    </section>
+
+    <section id="idea" class="section">
+      <div class="section-head center">
+        <p class="eyebrow">MOU en una frase</p>
+        <h2>Buscar el marco donde una señal dinámica se vuelve interpretable.</h2>
+        <p>MOU jerarquiza cómo mirar antes de decidir qué significa lo observado: distancia, ventana, escala, régimen, métricas, controles y fuerza legítima del claim.</p>
+      </div>
+      <div class="cards four">
+        <article class="card"><span class="icon cyan">ε</span><h3>Distancia de observación</h3><p>Explora cuánto cambia la información disponible al variar escala, vecindad o distancia observacional.</p></article>
+        <article class="card"><span class="icon blue">τ</span><h3>Ventana y delay</h3><p>Define separación temporal para reconstruir el espacio de estados sin redundancia excesiva ni pérdida de relación.</p></article>
+        <article class="card"><span class="icon violet">m</span><h3>Embedding</h3><p>Permite reconstruir una geometría observable desde una serie temporal parcial.</p></article>
+        <article class="card"><span class="icon red">Ω</span><h3>Utilidad observacional</h3><p>Síntesis auditable de lectura útil. No es voto absoluto ni prueba final por sí sola.</p></article>
+      </div>
+    </section>
+
+    <section id="cwru" class="section focus cwru-observability-feature">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Puerta metodológica externa · Maquinaria rotante</p>
+          <h2><span class="cwru-title-accent">CWRU Observability</span> como aplicación exploratoria de MOU/R³.</h2>
+        </div>
+        <p>CWRU Observability presenta una función posible de R³ aplicada a señales de rodamientos industriales: lectura por ventanas, distancia observacional calibrada por apertura, k* óptimo variable por canal y condición, y compuerta de claim. No es una sección decorativa: es un caso de uso concreto del marco MOU/R³ llevado a una visualización de investigación sobre el dataset Case Western Reserve University.</p>
+      </div>
+
+      <div class="cards three">
+        <article class="card"><span class="cwru-badge">R³ aplicado</span><h3>Lectura funcional CWRU</h3><p>Representa una lectura exploratoria de señal de vibración sobre rodamientos industriales, separando condición normal de fallas en pista interna y bola con severidades 0.007, 0.014 y 0.021 in.</p></article>
+        <article class="card"><span class="cwru-badge">Replay pipeline</span><h3>Visualizador 3D interactivo</h3><p>Replay del pipeline MOU-R³ sobre datos reales CWRU con Ω mediana preliminar, k* variable por canal y condición, y surrogate coherente por apertura.</p></article>
+        <article class="card"><span class="cwru-badge">Límite honesto</span><h3>Evidencia preliminar trazable</h3><p>Evidencia exploratoria compatible con la hipótesis de observabilidad útil dependiente de escala. No es validación definitiva: es una puerta metodológica con protocolo trazable.</p></article>
+      </div>
+
+      <div class="actions">
+        <a class="button cwru-primary" href="#cwru">Abrir CWRU Observability</a>
+        <a class="button ghost" href="#trazabilidad">Ver trazabilidad</a>
+      </div>
+
+      <div class="cwru-warning-strip" aria-label="Estado científico de CWRU Observability">
+        <span>⚠ Evidencia exploratoria · no diagnóstico certificado</span>
+        <span>Dataset público CWRU · Case Western Reserve University</span>
+        <span>Claim acotado: observación técnica preliminar</span>
+        <span>Surrogates competitivos aplicados por apertura</span>
+        <span>No superioridad frente a métodos establecidos de diagnóstico de fallas</span>
+      </div>
+    </section>
+
+    <section id="ecg-observability" class="section focus ecg-observability-feature">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Función candidata de R³ · señales fisiológicas</p>
+          <h2><span class="ecg-title-accent">ECG Observability</span> como aplicación exploratoria de MOU/R³.</h2>
+        </div>
+        <p>ECG Observability presenta una función posible de R³ aplicada a señales ECG: lectura por ventanas, distancia observacional, co-estabilización y compuerta de claim. No es una sección decorativa: es un caso de uso concreto del marco MOU/R³ llevado a una visualización de investigación.</p>
+      </div>
+
+      <div class="cards three">
+        <article class="card"><span class="ecg-badge">R³ aplicado</span><h3>Lectura funcional ECG</h3><p>Representa una lectura exploratoria de señal ECG sobre territorio funcional ventricular, especialmente el eje ventricular izquierdo apical–inferolateral.</p></article>
+        <article class="card"><span class="ecg-badge">Replay</span><h3>Pipeline experimental</h3><p>Permite recorrer ventanas de lectura y observar ε, τ, Ω/R³ y métricas auxiliares como replay experimental del pipeline, sin afirmar validación clínica.</p></article>
+        <article class="card"><span class="ecg-badge">Límite honesto</span><h3>No diagnóstico</h3><p>No localiza vasos coronarios, no reemplaza estudios médicos y no constituye validación externa. Es una visualización de investigación y desarrollo metodológico.</p></article>
+      </div>
+
+      <div class="actions">
+        <a class="button ecg-primary" href="ecg-3d-viewer-R3-MOU-fixed.html">Abrir ECG Observability</a>
+        <a class="button ghost" href="#trazabilidad">Ver trazabilidad</a>
+      </div>
+
+      <div class="ecg-warning-strip" aria-label="Estado científico de ECG Observability">
+        <span>Visualización de investigación</span>
+        <span>No diagnóstico</span>
+        <span>No validado externamente</span>
+        <span>Replay exploratorio MOU/R³</span>
+      </div>
+    </section>
+
+    <section id="eeg-observability" class="section focus eeg-observability-feature">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Nueva zona anclada · señales neurodinámicas</p>
+          <h2><span class="eeg-title-accent">EEG Observability</span> como aplicación exploratoria de MOU/R³.</h2>
+        </div>
+        <p>EEG Observability queda indexada en la página madre como una zona propia para señales electroencefalográficas. La lectura está orientada a dinámica neural, bandas oscilatorias, ventanas temporales, distancia observacional, co-estabilización y control nulo. El claim se mantiene prudente: investigación metodológica, no diagnóstico neurológico.</p>
+      </div>
+
+      <div class="cards three">
+        <article class="card"><span class="eeg-badge">R³ aplicado</span><h3>Lectura funcional EEG</h3><p>Zona preparada para leer señales EEG por ventanas y bandas funcionales, observando cambios de estructura, irregularidad, complejidad y estabilidad relativa entre regímenes.</p></article>
+        <article class="card"><span class="eeg-badge">Neurodinámica</span><h3>Ritmos y escalas</h3><p>Permite separar la intuición de lectura por ritmos delta, theta, alfa, beta y gamma sin convertir esas bandas en veredictos. Cada banda funciona como lente parcial dentro del marco MOU/R³.</p></article>
+        <article class="card"><span class="eeg-badge">Límite honesto</span><h3>No diagnóstico neurológico</h3><p>No detecta patologías, no reemplaza estudios clínicos y no afirma validación externa. Es una zona experimental para ordenar observabilidad útil sobre datos EEG.</p></article>
+      </div>
+
+      <div class="actions">
+        <a class="button eeg-primary" href="eeg-three-scene.html?v=1">Abrir EEG Observability</a>
+        <a class="button ghost" href="#metricas">Ver métricas</a>
+        <a class="button ghost" href="#trazabilidad">Ver trazabilidad</a>
+      </div>
+
+      <div class="eeg-warning-strip" aria-label="Estado científico de EEG Observability">
+        <span>🧠 Zona nueva anclada en página madre</span>
+        <span>Señales EEG · lectura neurodinámica exploratoria</span>
+        <span>No diagnóstico neurológico</span>
+        <span>No validado externamente</span>
+        <span>Preparado para pipeline MOU/R³ con surrogates</span>
+      </div>
+    </section>
+
+    <section id="demo" class="section focus">
+      <div class="section-head">
+        <div><p class="eyebrow">Demo central 3D</p><h2>Observabilidad útil como superficie.</h2></div>
+        <p>La superficie es conceptual: muestra la intuición de que la utilidad informativa puede subir o caer según ε y el marco de reconstrucción. No es una prueba final; es una herramienta explicativa.</p>
+      </div>
+      <div class="interactive">
+        <div class="chart-card big"><div id="mouSurface" class="chart"></div></div>
+        <aside class="panel"><h3>Lectura rápida</h3><p><b class="cyan-text">Zona alta:</b> combinación más fértil de distancia y marco.</p><p><b class="red-text">Zona baja:</b> saturación, ruido, distancia pobre o simplificación excesiva.</p><p><b class="violet-text">Frontera:</b> región donde conviene auditar con métricas y surrogates.</p></aside>
+      </div>
+    </section>
+
+    <section id="metricas" class="section">
+      <div class="section-head center">
+        <p class="eyebrow">Todas las lentes usadas</p>
+        <h2>Mapa completo de métricas, parámetros y controles de MOU.</h2>
+        <p>Estas son las piezas usadas para construir la hipótesis. Algunas son métricas clásicas; otras son parámetros de reconstrucción, controles o lecturas integradoras del framework.</p>
+      </div>
+      <div class="cards metric-grid">
+        <article class="card"><h3>Shannon</h3><p>Entropía informacional: mide incertidumbre/cantidad de información. No mide significado ni utilidad por sí sola.</p></article>
+        <article class="card"><h3>Lempel-Ziv / LZ</h3><p>Complejidad algorítmica aproximada: evalúa compresibilidad, patrones y riqueza secuencial.</p></article>
+        <article class="card"><h3>Sample Entropy / SampEn</h3><p>Irregularidad local: mide imprevisibilidad de patrones similares en una señal.</p></article>
+        <article class="card"><h3>Transfer Entropy / TE</h3><p>Transferencia direccional de información entre componentes o canales del sistema.</p></article>
+        <article class="card"><h3>Lyapunov λ</h3><p>Sensibilidad a condiciones iniciales: estabilidad, borde dinámico o divergencia caótica.</p></article>
+        <article class="card"><h3>D2</h3><p>Dimensión de correlación: complejidad geométrica efectiva del atractor reconstruido.</p></article>
+        <article class="card"><h3>Embedding</h3><p>Reconstrucción del espacio de estados desde observaciones temporales parciales.</p></article>
+        <article class="card"><h3>Delay τ</h3><p>Separación temporal usada para reducir redundancia y revelar estructura dinámica.</p></article>
+        <article class="card"><h3>ε dinámico</h3><p>Vecindad/distancia de observación asociada al punto donde la información se vuelve útil.</p></article>
+        <article class="card"><h3>m embedding</h3><p>Dimensión del espacio reconstruido, usada para observar forma y saturación geométrica.</p></article>
+        <article class="card"><h3>δ semidinámico</h3><p>Escala de evento/régimen que ayuda a contextualizar la observación.</p></article>
+        <article class="card"><h3>Surrogates</h3><p>Controles nulos: comparan la señal real contra sustitutos para evitar claims triviales.</p></article>
+        <article class="card"><h3>Regime detector</h3><p>Clasificación interpretativa: stable, weakly chaotic, chaotic, hyperchaotic o noisy.</p></article>
+        <article class="card"><h3>Claim gate</h3><p>Regla de salida: technical observation only, weak candidate, harder audit o external consistency candidate.</p></article>
+        <article class="card"><h3>Ω_obs</h3><p>Lectura integradora de observabilidad observada. No es voto absoluto: es síntesis auditable.</p></article>
+        <article class="card"><h3>Multi-lens audit</h3><p>Auditoría de redundancia y dependencia: evita que métricas similares acumulen fuerza artificial.</p></article>
+      </div>
+    </section>
+
+    <section id="informacion" class="section focus">
+      <div class="section-head center">
+        <p class="eyebrow">Shannon y MOU</p>
+        <h2>Cantidad de información no equivale automáticamente a información útil.</h2>
+        <p>Shannon ayuda a medir incertidumbre. Pero una señal con alta entropía puede ser ruido poco interpretable. MOU pregunta cuándo esa información se vuelve legible bajo una distancia, reconstrucción y control.</p>
+      </div>
+      <div class="cards three">
+        <article class="card"><h3>Señal plana</h3><p>Baja entropía, baja riqueza dinámica. Puede ser estable, pero no necesariamente informativa.</p></article>
+        <article class="card"><h3>Ruido alto</h3><p>Alta entropía de Shannon, pero poca utilidad interpretativa si no hay estructura recuperable.</p></article>
+        <article class="card"><h3>Complejidad estructurada</h3><p>Zona fértil para MOU: suficiente variación para informar y suficiente estructura para interpretar.</p></article>
+      </div>
+      <div class="claim wide"><strong>Clave conceptual:</strong> Shannon responde “cuánta incertidumbre hay”. MOU pregunta “cuándo esa información se vuelve útil para un observador bajo cierto ε, τ, m y control”.</div>
+    </section>
+
+    <section id="embedding" class="section grid">
+      <div><p class="eyebrow">Embedding</p><h2>Reconstruir la dinámica desde una serie temporal.</h2><p>El embedding transforma una serie 1D en geometría observable. Permite mirar no solo valores sueltos, sino la forma dinámica que emerge al comparar la señal consigo misma con retrasos.</p><div class="formula">[x(t), x(t−τ), x(t−2τ)]</div></div>
+      <div class="chart-card"><div class="toolbar"><label>τ embedding: <strong id="embeddingTauValue">14</strong></label><input id="embeddingTau" type="range" min="2" max="48" value="14" /></div><div id="embeddingChart" class="chart"></div></div>
+    </section>
+
+    <section id="delay" class="section grid muted">
+      <div class="chart-card"><div class="toolbar"><label>τ delay: <strong id="delayTauValue">9</strong></label><input id="delayTau" type="range" min="1" max="64" value="9" /></div><div id="delayChart" class="chart"></div></div>
+      <div><p class="eyebrow">Delay τ</p><h2>La separación correcta evita redundancia y pérdida.</h2><p>τ pequeño comprime la reconstrucción: demasiada redundancia. τ grande desconecta relaciones útiles. En una zona intermedia la geometría aparece con mayor claridad.</p><ul><li><b>τ pequeño:</b> redundancia.</li><li><b>τ medio:</b> estructura legible.</li><li><b>τ grande:</b> pérdida de relación dinámica.</li></ul></div>
+    </section>
+
+    <section id="lyapunov" class="section grid">
+      <div><p class="eyebrow">Lyapunov λ</p><h2>Sensibilidad al estado inicial.</h2><p>Lyapunov aporta una lectura sobre estabilidad o divergencia. En MOU no decide solo: se combina con geometría, entropía, complejidad, transferencia y controles.</p><div class="metric"><div><span>λ &lt; 0</span><b>Estabilidad</b></div><div><span>λ ≈ 0</span><b>Borde</b></div><div><span>λ &gt; 0</span><b>Sensibilidad/caos</b></div></div></div>
+      <div class="chart-card"><div class="toolbar"><label>λ simulado: <strong id="lambdaValue">0.32</strong></label><input id="lambdaSlider" type="range" min="-0.35" max="0.85" value="0.32" step="0.01" /></div><div id="lyapunovChart" class="chart"></div></div>
+    </section>
+
+    <section id="d2" class="section grid muted">
+      <div class="chart-card"><div class="toolbar"><label>Complejidad / ruido: <strong id="d2NoiseValue">0.35</strong></label><input id="d2Noise" type="range" min="0" max="1" value="0.35" step="0.01" /></div><div id="d2Chart" class="chart"></div></div>
+      <div><p class="eyebrow">D2</p><h2>Dimensión de correlación.</h2><p>D2 estima la complejidad geométrica efectiva de la dinámica observada. Una saturación clara puede sugerir estructura; ausencia de saturación exige cautela: ruido, mezcla de regímenes o mala ventana.</p></div>
+    </section>
+
+    <section id="controles" class="section">
+      <div class="section-head center"><p class="eyebrow">Honestidad investigativa</p><h2>Surrogates, gates y límites de claim.</h2><p>El punto no es forzar positivos. El punto es saber cuándo reclamar, cuándo callar y cuándo pedir una auditoría más dura.</p></div>
+      <div class="cards three">
+        <article class="card"><h3>Surrogates</h3><p>Si los controles nulos explican igual o mejor Ω_obs, el resultado se bloquea: no hay claim externo positivo.</p></article>
+        <article class="card"><h3>Claim gate</h3><p>technical_observation_only, weak candidate, harder audit o external consistency candidate según evidencia.</p></article>
+        <article class="card"><h3>Regímenes</h3><p>Stable, weakly chaotic, chaotic, hyperchaotic o noisy ayudan a contextualizar, no a vender conclusiones.</p></article>
+      </div>
+      <div class="claim wide"><strong>Regla MOU:</strong> las métricas no votan; las métricas explican. Un positivo no prueba MOU: señala un caso que merece auditoría más dura. Un negativo también informa.</div>
+    </section>
+
+    <section id="laboratorio" class="section lab-cta">
+      <div>
+        <p class="eyebrow">Laboratorio de simulaciones</p>
+        <h2>Explorar escala, ventana, ruido y legibilidad.</h2>
+        <p>El laboratorio interactivo permite visualizar cómo cambia la lectura de una señal al modificar distancia ε, ventana, ruido y umbral interpretativo. No demuestra MOU por sí mismo: hace visible la intuición central.</p>
+      </div>
+      <a class="button primary" href="mou-lab.html">Abrir Laboratorio MOU</a>
+    </section>
+
+    <section id="trazabilidad" class="section trace">
+      <div class="section-head"><p class="eyebrow">Autoría y trazabilidad</p><h2>Una hipótesis desarrollada como framework auditable.</h2><p>La prioridad intelectual se sostiene mejor con repositorios, releases, DOI, fechas, límites de claim y evolución pública. Publicar no equivale a decir “validado”; equivale a dejar una versión fechada, reproducible y criticable.</p></div>
+      <div class="cards three">
+        <article class="card"><h3>Autor</h3><p>Sergio Emanuel Duarte Belén</p></article>
+        <article class="card"><h3>DOI</h3><p><a href="https://doi.org/10.5281/zenodo.20482755" target="_blank" rel="noopener">10.5281/zenodo.20482755</a></p></article>
+        <article class="card"><h3>Estado del claim</h3><p>Framework exploratorio con evidencia preliminar externa y necesidad de auditorías más pesadas.</p></article>
+      </div>
+      <p class="closing">No toda distancia revela la misma información.</p>
+    </section>
+  </main>
+
+  <footer class="footer"><span>MOU · Marco de Observabilidad Útil para Sistemas Dinámicos</span><span>Web interactiva v4.2 · DOI + CWRU + ECG + EEG</span></footer>
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  <script>
+const $=id=>document.getElementById(id);
+if(window.Plotly){
+ const x=Array.from({length:80},(_,i)=>i/10);
+ const signal=x.map(v=>Math.sin(v*1.7)+.35*Math.sin(v*4.1));
+ Plotly.newPlot('mouSurface',[{x,y:signal,mode:'lines',name:'señal observada'}],{paper_bgcolor:'transparent',plot_bgcolor:'transparent',font:{color:'#b7bfcc'},margin:{l:45,r:20,t:20,b:40},xaxis:{title:'escala / observación'},yaxis:{title:'legibilidad relativa'},showlegend:false},{responsive:true,displayModeBar:false});
+ const ex=Array.from({length:100},(_,i)=>i); const ey=ex.map(i=>Math.sin(i/9)+.12*Math.sin(i/2.8));
+ Plotly.newPlot('embeddingChart',[{x:ex,y:ey,mode:'lines',line:{color:'#8b7cff'}}],{paper_bgcolor:'transparent',plot_bgcolor:'transparent',font:{color:'#b7bfcc'},margin:{l:40,r:15,t:15,b:35},showlegend:false},{responsive:true,displayModeBar:false});
+ const dx=Array.from({length:80},(_,i)=>i),dy=dx.map(i=>Math.exp(-i/22)*Math.cos(i/5));
+ Plotly.newPlot('delayChart',[{x:dx,y:dy,mode:'lines',line:{color:'#38dfff'}}],{paper_bgcolor:'transparent',plot_bgcolor:'transparent',font:{color:'#b7bfcc'},margin:{l:40,r:15,t:15,b:35},showlegend:false},{responsive:true,displayModeBar:false});
+ const lx=Array.from({length:60},(_,i)=>i),ly=lx.map(i=>.32*Math.exp(-i/45));
+ Plotly.newPlot('lyapunovChart',[{x:lx,y:ly,mode:'lines',line:{color:'#6ee7b7'}}],{paper_bgcolor:'transparent',plot_bgcolor:'transparent',font:{color:'#b7bfcc'},margin:{l:40,r:15,t:15,b:35},showlegend:false},{responsive:true,displayModeBar:false});
+ const nx=Array.from({length:80},(_,i)=>i/79),ny=nx.map(v=>Math.sin(v*12)*.3+.35+v*.2);
+ Plotly.newPlot('d2Chart',[{x:nx,y:ny,mode:'lines',line:{color:'#f59e0b'}}],{paper_bgcolor:'transparent',plot_bgcolor:'transparent',font:{color:'#b7bfcc'},margin:{l:40,r:15,t:15,b:35},showlegend:false},{responsive:true,displayModeBar:false});
+}
+for(const [slider,out] of [['embeddingTau','embeddingTauValue'],['delayTau','delayTauValue'],['lambdaSlider','lambdaValue'],['d2Noise','d2NoiseValue']]){const s=$(slider),o=$(out);if(s&&o)s.addEventListener('input',()=>o.textContent=s.value)}
+const mb=$('menuButton'),nav=$('mainNav');if(mb)mb.onclick=()=>nav.style.display=nav.style.display==='flex'?'none':'flex';
+</script>
+</body>
+</html>

@@ -1,0 +1,906 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MOU/R³ · EEG Observability · Exploratory View</title>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"
+  }
+}
+</script>
+
+<style>
+:root{
+  --bg:#020814;
+  --cyan:#38dfff;
+  --violet:#c084fc;
+  --amber:#f59e0b;
+  --green:#6ee7b7;
+  --red:#fb7185;
+  --ink:#eaf6ff;
+  --muted:#a9bbcb;
+  --edge:rgba(125,211,252,.34);
+  --rail:370px;
+  --header:132px;
+}
+*{box-sizing:border-box}
+html,body{
+  margin:0;
+  width:100%;
+  min-height:100%;
+  overflow-x:hidden;
+  overflow-y:auto;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+button{font:inherit}
+
+.page{
+  width:100vw;
+  height:100vh;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) var(--rail);
+  overflow:hidden;
+  background:#020814;
+}
+
+.visualCol{
+  min-width:0;
+  height:100vh;
+  display:grid;
+  grid-template-rows:var(--header) minmax(0,1fr);
+  overflow:hidden;
+  background:#020814;
+}
+
+.topHeader{
+  position:relative;
+  z-index:5;
+  padding:18px 20px 12px;
+  border-bottom:1px solid rgba(125,211,252,.20);
+  background:
+    radial-gradient(circle at 14% 0%,rgba(56,223,255,.18),transparent 36%),
+    linear-gradient(135deg,rgba(2,8,20,.98),rgba(4,18,38,.88));
+  box-shadow:0 18px 60px rgba(0,0,0,.26);
+}
+.headerBox{
+  height:100%;
+  display:grid;
+  grid-template-columns:minmax(360px,.78fr) minmax(260px,1fr);
+  gap:22px;
+  align-items:center;
+}
+.kicker{
+  margin:0;
+  color:#8eefff;
+  font-size:10px;
+  font-weight:950;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+}
+.title{
+  margin:4px 0 0;
+  font-size:clamp(30px,4.2vw,50px);
+  line-height:.95;
+  letter-spacing:-.045em;
+  white-space:nowrap;
+}
+.title span{color:#8eefff}
+.subtitle{
+  margin:0;
+  justify-self:end;
+  max-width:650px;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.45;
+}
+.subtitle strong{color:#fef3c7}
+
+.sceneWrap{
+  position:relative;
+  min-width:0;
+  min-height:0;
+  overflow:hidden;
+  background:radial-gradient(circle at 48% 38%,#07203a 0,#020814 52%,#00040c 100%);
+}
+#three-canvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+  z-index:1;
+}
+.vignette{
+  position:absolute;
+  inset:0;
+  z-index:2;
+  pointer-events:none;
+  background:radial-gradient(circle at center,transparent 0 51%,rgba(0,4,12,.24) 76%,rgba(0,0,0,.64) 100%);
+}
+.scanline{
+  position:absolute;
+  inset:0;
+  z-index:3;
+  pointer-events:none;
+  opacity:.052;
+  background:repeating-linear-gradient(0deg,rgba(255,255,255,.08) 0 1px,transparent 1px 4px);
+  mix-blend-mode:screen;
+}
+
+.sceneStatus,.sceneWarning{
+  position:absolute;
+  bottom:86px;
+  z-index:10;
+  padding:10px 12px;
+  border-radius:16px;
+  backdrop-filter:blur(12px);
+  max-width:calc(50% - 24px);
+}
+.sceneStatus{
+  left:18px;
+  background:rgba(2,8,20,.68);
+  border:1px solid rgba(56,223,255,.28);
+  color:#d7f8ff;
+  font-size:12px;
+  font-weight:850;
+  letter-spacing:.04em;
+}
+.sceneWarning{
+  right:18px;
+  color:#fde68a;
+  background:rgba(2,8,20,.64);
+  border:1px solid rgba(245,158,11,.28);
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.dock{
+  position:absolute;
+  left:50%;
+  bottom:18px;
+  transform:translateX(-50%);
+  z-index:9;
+  display:flex;
+  gap:10px;
+  max-width:calc(100% - 300px);
+  overflow-x:auto;
+  padding:9px;
+  border-radius:20px;
+  background:rgba(2,8,20,.72);
+  border:1px solid var(--edge);
+  box-shadow:0 18px 60px rgba(0,0,0,.38);
+  backdrop-filter:blur(14px);
+}
+.btn{
+  cursor:pointer;
+  border:1px solid rgba(125,211,252,.38);
+  border-radius:14px;
+  padding:10px 13px;
+  background:linear-gradient(180deg,rgba(8,47,73,.88),rgba(3,18,35,.86));
+  color:#ecfbff;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  white-space:nowrap;
+  transition:transform .16s ease,border-color .16s ease,background .16s ease;
+}
+.btn:hover,.btn.active{
+  transform:translateY(-1px);
+  border-color:rgba(56,223,255,.75);
+  background:linear-gradient(135deg,rgba(56,223,255,.32),rgba(192,132,252,.28));
+}
+
+.sideRail{
+  height:100vh;
+  overflow-y:auto;
+  padding:18px 16px;
+  border-left:1px solid rgba(125,211,252,.22);
+  background:
+    radial-gradient(circle at 65% 0%,rgba(56,223,255,.13),transparent 32%),
+    linear-gradient(180deg,rgba(2,8,20,.98),rgba(4,18,36,.94));
+  box-shadow:-20px 0 80px rgba(0,0,0,.40);
+}
+.railHeader{
+  margin-bottom:14px;
+  padding:14px;
+  border-radius:20px;
+  border:1px solid rgba(125,211,252,.25);
+  background:rgba(2,8,20,.40);
+}
+.railHeader .eyebrow{
+  margin:0;
+  color:#8eefff;
+  font-size:10px;
+  font-weight:950;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+}
+.railHeader h2{
+  margin:7px 0 6px;
+  color:#ecfbff;
+  font-size:22px;
+  line-height:1;
+  letter-spacing:-.03em;
+}
+.railHeader p{
+  margin:0;
+  color:#a9bbcb;
+  font-size:12px;
+  line-height:1.42;
+}
+
+.tabs{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr 1fr;
+  gap:7px;
+  margin-bottom:12px;
+}
+.tab{
+  cursor:pointer;
+  border:1px solid rgba(125,211,252,.24);
+  border-radius:13px;
+  padding:9px 7px;
+  background:rgba(8,47,73,.35);
+  color:#dff8ff;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.07em;
+  text-transform:uppercase;
+}
+.tab.active{
+  border-color:rgba(56,223,255,.72);
+  background:linear-gradient(135deg,rgba(56,223,255,.28),rgba(192,132,252,.22));
+}
+
+.railPanel{
+  display:none;
+  border:1px solid rgba(125,211,252,.26);
+  border-radius:20px;
+  background:linear-gradient(180deg,rgba(2,8,20,.72),rgba(5,18,36,.56));
+  box-shadow:0 18px 60px rgba(0,0,0,.24);
+  backdrop-filter:blur(12px);
+  padding:14px;
+}
+.railPanel.active{display:block}
+.railPanel h3{
+  margin:0 0 11px;
+  color:#9ef1ff;
+  font-size:12px;
+  font-weight:950;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+.railPanel p{
+  margin:0 0 10px;
+  color:#c4d3e4;
+  font-size:12px;
+  line-height:1.45;
+}
+.railPanel strong,.lens b{color:#fef3c7}
+
+.pipelineAction{
+  width:100%;
+  margin:0 0 12px;
+  cursor:pointer;
+  border:1px solid rgba(245,158,11,.48);
+  border-radius:16px;
+  padding:12px 13px;
+  background:linear-gradient(135deg,rgba(245,158,11,.28),rgba(56,223,255,.18));
+  color:#fff7cc;
+  font-size:12px;
+  font-weight:950;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+  box-shadow:0 14px 38px rgba(0,0,0,.28),0 0 22px rgba(245,158,11,.10);
+}
+.pipelineAction:hover{
+  border-color:rgba(245,158,11,.80);
+  transform:translateY(-1px);
+}
+.pipelineAction.active{
+  border-color:rgba(56,223,255,.84);
+  background:linear-gradient(135deg,rgba(56,223,255,.30),rgba(245,158,11,.24));
+  color:#ecfbff;
+}
+
+.metric{margin:9px 0 11px}
+.metric-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:6px;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.metric-head span:first-child{color:#d8f7ff}
+.metric-head span:last-child{color:#fde68a}
+.meter{
+  position:relative;
+  overflow:hidden;
+  height:7px;
+  border-radius:999px;
+  background:rgba(15,45,70,.70);
+  border:1px solid rgba(125,211,252,.18);
+}
+.meter i{
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:0%;
+  border-radius:999px;
+  background:linear-gradient(90deg,rgba(56,223,255,.82),rgba(192,132,252,.74),rgba(245,158,11,.70));
+  box-shadow:0 0 18px rgba(56,223,255,.22);
+}
+
+.statebox{
+  margin-top:10px;
+  padding:10px;
+  border-radius:16px;
+  background:rgba(8,47,73,.26);
+  border:1px solid rgba(125,211,252,.22);
+}
+.statebox b{
+  display:block;
+  margin-bottom:4px;
+  color:#fef3c7;
+  font-size:10px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.statebox span{
+  color:#c4d3e4;
+  font-size:11px;
+  line-height:1.42;
+}
+
+.lens{
+  display:grid;
+  gap:8px;
+}
+.lens div{
+  padding:10px;
+  border-radius:15px;
+  border:1px solid rgba(125,211,252,.18);
+  background:rgba(2,8,20,.34);
+  color:#c4d3e4;
+  font-size:11px;
+  line-height:1.42;
+}
+.lens span{
+  display:block;
+  margin-bottom:2px;
+  color:#8eefff;
+  font-weight:950;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.bandGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:10px;
+}
+.band{
+  border:1px solid rgba(125,211,252,.18);
+  border-radius:15px;
+  padding:10px;
+  background:rgba(2,8,20,.34);
+}
+.band b{
+  display:block;
+  color:#eaf6ff;
+  font-size:11px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.band span{
+  color:#9fb3c8;
+  font-size:10px;
+}
+.warn{
+  margin-top:12px;
+  padding:11px;
+  border:1px solid rgba(245,158,11,.28);
+  border-radius:16px;
+  background:rgba(120,53,15,.16);
+  color:#fde68a;
+  font-size:11px;
+  line-height:1.42;
+  font-weight:760;
+}
+.footLink{
+  display:inline-flex;
+  margin-top:11px;
+  border:1px solid rgba(125,211,252,.26);
+  border-radius:14px;
+  padding:9px 10px;
+  color:#ecfbff;
+  text-decoration:none;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  background:rgba(8,47,73,.32);
+}
+.footLink:hover{border-color:rgba(56,223,255,.72)}
+.noWebgl{
+  position:absolute;
+  inset:0;
+  z-index:20;
+  display:none;
+  place-items:center;
+  padding:24px;
+  background:#020814;
+  color:#eaf6ff;
+  text-align:center;
+}
+
+@media(max-width:980px){
+  :root{--header:auto}
+  .page{
+    height:auto;
+    min-height:100vh;
+    grid-template-columns:1fr;
+    overflow:visible;
+  }
+  .visualCol{
+    height:72vh;
+    min-height:660px;
+    grid-template-rows:auto minmax(520px,1fr);
+  }
+  .sideRail{
+    height:auto;
+    min-height:420px;
+    border-left:0;
+    border-top:1px solid rgba(125,211,252,.22);
+  }
+  .headerBox{
+    grid-template-columns:1fr;
+    gap:8px;
+  }
+  .title{white-space:normal}
+  .subtitle{justify-self:start}
+  .dock{max-width:calc(100% - 24px)}
+  .sceneStatus,.sceneWarning{
+    position:absolute;
+    max-width:calc(100% - 36px);
+    left:18px;
+    right:auto;
+  }
+  .sceneWarning{bottom:128px}
+}
+@media(max-width:560px){
+  .visualCol{min-height:720px}
+  .topHeader{padding:16px}
+  .tabs{grid-template-columns:1fr 1fr}
+  .bandGrid{grid-template-columns:1fr}
+  .dock{
+    left:12px;
+    right:12px;
+    transform:none;
+    justify-content:flex-start;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="page">
+  <section class="visualCol" aria-label="Visualización EEG Observability">
+    <header class="topHeader">
+      <div class="headerBox">
+        <div>
+          <p class="kicker">MOU/R³ · EEG Observability</p>
+          <h1 class="title">Lectura multicanal de <span>observabilidad cerebral</span>.</h1>
+        </div>
+        <p class="subtitle">
+          Vista exploratoria para EEG: bandas, sincronía espacial, ventanas, artefactos y compuerta de claim.
+          <strong>No diagnostica</strong>, no interpreta estados mentales y no reemplaza lectura clínica experta.
+        </p>
+      </div>
+    </header>
+
+    <div class="sceneWrap">
+      <canvas id="three-canvas"></canvas>
+      <div class="vignette"></div>
+      <div class="scanline"></div>
+      <div class="sceneStatus" id="sceneStatus">Estado: alfa posterior estable · zona de lectura útil</div>
+      <div class="sceneWarning">Investigación visual · no diagnóstico clínico</div>
+      <div class="dock" aria-label="Escenarios EEG">
+        <button class="btn active" data-mode="alpha">Alfa estable</button>
+        <button class="btn" data-mode="theta">Somnolencia</button>
+        <button class="btn" data-mode="spike">Evento transitorio</button>
+        <button class="btn" data-mode="artifact">Artefacto</button>
+      </div>
+      <div class="noWebgl" id="noWebgl">
+        <div>
+          <h2>No se pudo iniciar WebGL</h2>
+          <p>La página mantiene su lectura explicativa, pero la escena 3D requiere WebGL activo.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <aside class="sideRail" aria-label="Panel técnico EEG">
+    <div class="railHeader">
+      <p class="eyebrow">Exploratory claim gate</p>
+      <h2>EEG bajo MOU/R³</h2>
+      <p>La pregunta no es “qué piensa el sujeto”, sino cuándo una señal multicanal deja de ser ruido operativo y empieza a mostrar estructura interpretable bajo escala, ventana y controles.</p>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="lectura">Lectura</button>
+      <button class="tab" data-tab="bandas">Bandas</button>
+      <button class="tab" data-tab="mou">MOU/R³</button>
+      <button class="tab" data-tab="limites">Límites</button>
+    </div>
+
+    <section class="railPanel active" id="panel-lectura">
+      <button class="pipelineAction" id="pipelineBtn">Reproducir lectura EEG</button>
+
+      <div class="metric">
+        <div class="metric-head"><span>Ω/R³ observabilidad</span><span id="omegaVal">0.71</span></div>
+        <div class="meter"><i id="omegaMeter" style="width:71%"></i></div>
+      </div>
+      <div class="metric">
+        <div class="metric-head"><span>Coherencia espacial</span><span id="cohVal">0.66</span></div>
+        <div class="meter"><i id="cohMeter" style="width:66%"></i></div>
+      </div>
+      <div class="metric">
+        <div class="metric-head"><span>Riesgo de artefacto</span><span id="artVal">0.18</span></div>
+        <div class="meter"><i id="artMeter" style="width:18%"></i></div>
+      </div>
+
+      <div class="statebox">
+        <b id="stateTitle">Ventana candidata</b>
+        <span id="stateText">Ritmo alfa posterior relativamente estable, baja contaminación simulada y lectura compatible con zona útil. El claim queda como visualización exploratoria.</span>
+      </div>
+    </section>
+
+    <section class="railPanel" id="panel-bandas">
+      <h3>Bandas EEG aproximadas</h3>
+      <p>La escena separa la señal en ritmos didácticos. Las fronteras no deben tratarse como cortes ontológicos rígidos: son convenciones de lectura.</p>
+      <div class="bandGrid">
+        <div class="band"><b>Delta</b><span>&lt; 4 Hz · sueño profundo / lentitud</span></div>
+        <div class="band"><b>Theta</b><span>4–7 Hz · somnolencia / transición</span></div>
+        <div class="band"><b>Alpha</b><span>8–12 Hz · reposo posterior</span></div>
+        <div class="band"><b>Beta</b><span>13–30 Hz · actividad rápida</span></div>
+        <div class="band"><b>Gamma</b><span>30+ Hz · lectura delicada por EMG</span></div>
+        <div class="band"><b>Transitorios</b><span>spikes / sharp waves requieren experto</span></div>
+      </div>
+      <div class="warn">MOU no convierte bandas en diagnóstico: las usa como lentes auditables junto a ventana, canal, artefactos y control nulo.</div>
+    </section>
+
+    <section class="railPanel" id="panel-mou">
+      <h3>Qué miraría MOU</h3>
+      <div class="lens">
+        <div><span>ε observacional</span><b>Demasiado cerca</b>: microvariación, ruido, parpadeo o EMG pueden dominar. <b>Demasiado lejos</b>: el promedio borra eventos transitorios.</div>
+        <div><span>τ / ventana</span>Evalúa si la reconstrucción conserva relación temporal sin redundancia excesiva ni pérdida de estructura.</div>
+        <div><span>R³</span>Busca co-estabilización: ritmo, geometría, complejidad y coherencia espacial convergen sin ser explicados por surrogates.</div>
+        <div><span>Claim gate</span>Si artefactos o controles explican la lectura, se bloquea el claim y queda como observación técnica.</div>
+      </div>
+    </section>
+
+    <section class="railPanel" id="panel-limites">
+      <h3>Límites explícitos</h3>
+      <p>EEG de cuero cabelludo tiene gran resolución temporal, pero baja especificidad espacial. La señal puede estar contaminada por parpadeos, músculos, movimiento, mala impedancia o ruido de línea.</p>
+      <p>Esta sección debe decirlo de frente: <strong>no diagnostica epilepsia, sueño, lesión, conciencia ni emoción</strong>. Solo muestra cómo MOU/R³ podría ordenar una lectura exploratoria.</p>
+      <div class="warn">Para pasar de visualización a uso real harían falta dataset etiquetado, protocolo reproducible, comparación contra métodos establecidos, revisión clínica y validación externa.</div>
+      <a class="footLink" href="index.html">Volver a MOU</a>
+    </section>
+  </aside>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const canvas = document.getElementById('three-canvas');
+const noWebgl = document.getElementById('noWebgl');
+const sceneStatus = document.getElementById('sceneStatus');
+const stateTitle = document.getElementById('stateTitle');
+const stateText = document.getElementById('stateText');
+
+const metrics = {
+  omegaVal: document.getElementById('omegaVal'),
+  omegaMeter: document.getElementById('omegaMeter'),
+  cohVal: document.getElementById('cohVal'),
+  cohMeter: document.getElementById('cohMeter'),
+  artVal: document.getElementById('artVal'),
+  artMeter: document.getElementById('artMeter')
+};
+
+const MODES = {
+  alpha: {
+    label:'Alfa posterior estable',
+    status:'Estado: alfa posterior estable · zona de lectura útil',
+    omega:.71, coh:.66, art:.18,
+    color:0x38dfff,
+    title:'Ventana candidata',
+    text:'Ritmo alfa posterior relativamente estable, baja contaminación simulada y lectura compatible con zona útil. El claim queda como visualización exploratoria.',
+    speed:.72, amp:.22, posterior:1.0, chaos:.08
+  },
+  theta: {
+    label:'Somnolencia / transición',
+    status:'Estado: aumento theta · transición de régimen',
+    omega:.57, coh:.49, art:.25,
+    color:0xc084fc,
+    title:'Cambio de régimen',
+    text:'La ventana sugiere transición funcional: más lentitud, menor estabilidad espacial y necesidad de segmentar antes de reclamar patrón útil.',
+    speed:.46, amp:.30, posterior:.45, chaos:.14
+  },
+  spike: {
+    label:'Evento transitorio',
+    status:'Estado: evento transitorio · requiere auditoría experta',
+    omega:.62, coh:.58, art:.31,
+    color:0xf59e0b,
+    title:'Transitorio bajo auditoría',
+    text:'El evento aparece como descarga breve en algunos canales. No se interpreta como epileptiforme sin dataset, montaje, contexto clínico y lectura experta.',
+    speed:1.18, amp:.36, posterior:.62, chaos:.22
+  },
+  artifact: {
+    label:'Artefacto probable',
+    status:'Estado: contaminación simulada · claim bloqueado',
+    omega:.28, coh:.22, art:.84,
+    color:0xfb7185,
+    title:'Claim bloqueado',
+    text:'La lectura queda dominada por contaminación compatible con parpadeo, músculo, movimiento o mala impedancia. MOU/R³ no debe reclamar señal útil.',
+    speed:1.65, amp:.48, posterior:.22, chaos:.62
+  }
+};
+
+let modeName = 'alpha';
+let mode = MODES[modeName];
+
+function setMetric(valueEl, meterEl, v){
+  valueEl.textContent = v.toFixed(2);
+  meterEl.style.width = Math.round(v * 100) + '%';
+}
+function updateText(){
+  sceneStatus.textContent = mode.status;
+  stateTitle.textContent = mode.title;
+  stateText.textContent = mode.text;
+  setMetric(metrics.omegaVal, metrics.omegaMeter, mode.omega);
+  setMetric(metrics.cohVal, metrics.cohMeter, mode.coh);
+  setMetric(metrics.artVal, metrics.artMeter, mode.art);
+}
+
+document.querySelectorAll('.btn[data-mode]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.btn[data-mode]').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    modeName = btn.dataset.mode;
+    mode = MODES[modeName];
+    updateText();
+  });
+});
+
+document.querySelectorAll('.tab[data-tab]').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.railPanel').forEach(p=>p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+document.getElementById('pipelineBtn').addEventListener('click', e=>{
+  e.currentTarget.classList.toggle('active');
+  e.currentTarget.textContent = e.currentTarget.classList.contains('active')
+    ? 'Lectura EEG en reproducción'
+    : 'Reproducir lectura EEG';
+});
+
+let renderer;
+try{
+  renderer = new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+}catch(e){
+  noWebgl.style.display = 'grid';
+  throw e;
+}
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
+camera.position.set(0, 2.3, 7.0);
+
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.setClearColor(0x020814, 1);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.enablePan = false;
+controls.minDistance = 4.2;
+controls.maxDistance = 10;
+controls.autoRotate = true;
+controls.autoRotateSpeed = .55;
+
+scene.add(new THREE.AmbientLight(0x7dd3fc, .42));
+const key = new THREE.PointLight(0x38dfff, 2.2, 12);
+key.position.set(3,4,5);
+scene.add(key);
+const fill = new THREE.PointLight(0xc084fc, 1.25, 10);
+fill.position.set(-4,-2,3);
+scene.add(fill);
+
+const brain = new THREE.Group();
+scene.add(brain);
+
+const shellGeo = new THREE.SphereGeometry(1.55, 64, 48);
+shellGeo.scale(1.08, .82, 1.28);
+const shellMat = new THREE.MeshBasicMaterial({
+  color:0x38dfff,
+  transparent:true,
+  opacity:.055,
+  wireframe:true
+});
+const shell = new THREE.Mesh(shellGeo, shellMat);
+brain.add(shell);
+
+const innerGeo = new THREE.SphereGeometry(1.30, 48, 36);
+innerGeo.scale(1.02, .72, 1.12);
+const innerMat = new THREE.MeshBasicMaterial({
+  color:0xc084fc,
+  transparent:true,
+  opacity:.035,
+  wireframe:true
+});
+const inner = new THREE.Mesh(innerGeo, innerMat);
+inner.rotation.z = .08;
+brain.add(inner);
+
+function makeCurve(offset, color, radius=1.1){
+  const pts=[];
+  for(let i=0;i<160;i++){
+    const t=(i/159)*Math.PI*2;
+    const x=Math.cos(t)*radius;
+    const y=Math.sin(t*.92+offset)*.18;
+    const z=Math.sin(t)*radius*.74 + Math.sin(t*3+offset)*.08;
+    pts.push(new THREE.Vector3(x,y,z));
+  }
+  const geo = new THREE.BufferGeometry().setFromPoints(pts);
+  const mat = new THREE.LineBasicMaterial({color,transparent:true,opacity:.42});
+  const line = new THREE.Line(geo,mat);
+  line.rotation.y = offset * .38;
+  return line;
+}
+
+const waves = [
+  makeCurve(.0,0x38dfff,1.08),
+  makeCurve(1.7,0xc084fc,1.19),
+  makeCurve(3.2,0xf59e0b,.96),
+  makeCurve(4.4,0x6ee7b7,1.02)
+];
+waves.forEach(w=>brain.add(w));
+
+const electrodePositions = [
+  ['Fp1',-.82,.74,1.08], ['Fp2',.82,.74,1.08],
+  ['F3',-.98,.42,.62], ['F4',.98,.42,.62],
+  ['C3',-1.16,.05,0], ['C4',1.16,.05,0],
+  ['T3',-1.40,-.05,.05], ['T4',1.40,-.05,.05],
+  ['P3',-.92,-.30,-.72], ['P4',.92,-.30,-.72],
+  ['O1',-.55,-.48,-1.17], ['O2',.55,-.48,-1.17],
+  ['Fz',0,.57,.58], ['Cz',0,.15,0], ['Pz',0,-.35,-.72]
+];
+
+const electrodeGroup = new THREE.Group();
+brain.add(electrodeGroup);
+const electrodes=[];
+const dotGeo = new THREE.SphereGeometry(.055,16,12);
+const lineMat = new THREE.LineBasicMaterial({color:0x7dd3fc,transparent:true,opacity:.13});
+
+electrodePositions.forEach(([name,x,y,z],i)=>{
+  const mat = new THREE.MeshStandardMaterial({
+    color:0x38dfff,
+    emissive:0x38dfff,
+    emissiveIntensity:.7,
+    roughness:.22,
+    metalness:.0
+  });
+  const dot = new THREE.Mesh(dotGeo, mat);
+  dot.position.set(x,y,z);
+  dot.userData = {name, base:new THREE.Vector3(x,y,z), phase:i*.71};
+  electrodeGroup.add(dot);
+  electrodes.push(dot);
+
+  const geo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,0), dot.position.clone()]);
+  const ln = new THREE.Line(geo,lineMat);
+  electrodeGroup.add(ln);
+});
+
+const spikeGeo = new THREE.BufferGeometry();
+const spikePts = [];
+for(let i=0;i<100;i++){
+  const x = -2.2 + i*(4.4/99);
+  let y = Math.sin(i*.42)*.12;
+  if(i>48 && i<54) y += (1 - Math.abs(i-51)/3) * .95;
+  spikePts.push(new THREE.Vector3(x,y,-2.35));
+}
+spikeGeo.setFromPoints(spikePts);
+const spikeLine = new THREE.Line(spikeGeo,new THREE.LineBasicMaterial({color:0xf59e0b,transparent:true,opacity:.55}));
+scene.add(spikeLine);
+
+const grid = new THREE.GridHelper(6.5, 18, 0x38dfff, 0x1e3a5f);
+grid.position.y = -1.75;
+grid.material.transparent = true;
+grid.material.opacity = .18;
+scene.add(grid);
+
+function resize(){
+  const rect = canvas.parentElement.getBoundingClientRect();
+  renderer.setSize(rect.width, rect.height, false);
+  camera.aspect = rect.width / Math.max(1, rect.height);
+  camera.updateProjectionMatrix();
+}
+window.addEventListener('resize', resize);
+resize();
+
+const clock = new THREE.Clock();
+
+function animate(){
+  const t = clock.getElapsedTime();
+  const target = new THREE.Color(mode.color);
+  shell.material.color.lerp(target,.04);
+  inner.material.color.lerp(target,.025);
+
+  brain.rotation.y = Math.sin(t*.12)*.18;
+  brain.rotation.x = Math.sin(t*.09)*.06;
+
+  waves.forEach((w,idx)=>{
+    w.rotation.z += .0015 * mode.speed * (idx+1);
+    w.material.color.lerp(target,.025);
+    w.material.opacity = .22 + .18*Math.sin(t*mode.speed + idx);
+    const pos = w.geometry.attributes.position;
+    for(let i=0;i<pos.count;i++){
+      const x=pos.getX(i);
+      const z=pos.getZ(i);
+      const base=Math.sin(i*.18 + t*mode.speed*2 + idx);
+      const artifact = modeName === 'artifact' ? Math.sin(i*1.7+t*7.0)*mode.chaos : 0;
+      pos.setY(i, base*mode.amp*.16 + artifact*.13 + Math.sin(z*2+t+idx)*.05);
+    }
+    pos.needsUpdate = true;
+  });
+
+  electrodes.forEach((e,i)=>{
+    const posterior = e.userData.name.startsWith('O') || e.userData.name.startsWith('P');
+    const frontal = e.userData.name.startsWith('Fp') || e.userData.name.startsWith('F');
+    let boost = posterior ? mode.posterior : .52;
+    if(modeName === 'artifact' && frontal) boost = 1.4;
+    if(modeName === 'spike' && (e.userData.name === 'T3' || e.userData.name === 'C3' || e.userData.name === 'P3')) boost = 1.35;
+
+    const pulse = .5 + .5*Math.sin(t*mode.speed*4 + e.userData.phase);
+    const intensity = .35 + boost*pulse + mode.chaos*Math.random()*0.18;
+    e.scale.setScalar(1 + intensity*.72);
+    e.material.color.lerp(target,.06);
+    e.material.emissive.lerp(target,.06);
+    e.material.emissiveIntensity = .35 + intensity*.9;
+  });
+
+  spikeLine.visible = modeName === 'spike' || modeName === 'artifact';
+  spikeLine.material.opacity = modeName === 'spike' ? .70 + .18*Math.sin(t*5) : .34 + .28*Math.sin(t*12);
+  spikeLine.material.color.lerp(target,.05);
+  spikeLine.position.y = -1.28 + Math.sin(t*1.2)*.04;
+
+  controls.update();
+  renderer.render(scene,camera);
+  requestAnimationFrame(animate);
+}
+
+updateText();
+animate();
+</script>
+</body>
+</html>
