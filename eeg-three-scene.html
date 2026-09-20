@@ -24,524 +24,343 @@
   --red:#fb7185;
   --ink:#eaf6ff;
   --muted:#a9bbcb;
-  --edge:rgba(125,211,252,.34);
-  --rail:370px;
-  --header:132px;
+  --rail:360px;
 }
-*{box-sizing:border-box}
+*{box-sizing:border-box;margin:0;padding:0}
 html,body{
-  margin:0;
-  width:100%;
-  min-height:100%;
-  overflow-x:hidden;
-  overflow-y:auto;
+  width:100%;height:100vh;
+  overflow:hidden;
   background:var(--bg);
   color:var(--ink);
   font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
 }
-button{font:inherit}
+button{font:inherit;cursor:pointer}
 
+/* ── PAGE: header top, then brain|panel side by side ── */
 .page{
+  display:grid;
   width:100vw;
   height:100vh;
-  display:grid;
-  grid-template-columns:minmax(0,1fr) var(--rail);
-  overflow:hidden;
-  background:#020814;
+  grid-template-rows:72px 1fr;
+  grid-template-columns:1fr var(--rail);
 }
 
-.visualCol{
-  min-width:0;
-  height:100vh;
-  display:grid;
-  grid-template-rows:var(--header) minmax(0,1fr);
-  overflow:hidden;
-  background:#020814;
-}
-
+/* Header spans full width */
 .topHeader{
-  position:relative;
-  z-index:5;
-  padding:18px 20px 12px;
-  border-bottom:1px solid rgba(125,211,252,.20);
-  background:
-    radial-gradient(circle at 14% 0%,rgba(56,223,255,.18),transparent 36%),
-    linear-gradient(135deg,rgba(2,8,20,.98),rgba(4,18,38,.88));
-  box-shadow:0 18px 60px rgba(0,0,0,.26);
-}
-.headerBox{
-  height:100%;
-  display:grid;
-  grid-template-columns:minmax(360px,.78fr) minmax(260px,1fr);
-  gap:22px;
+  grid-column:1/-1;
+  grid-row:1;
+  display:flex;
   align-items:center;
+  gap:20px;
+  padding:0 22px;
+  border-bottom:1px solid rgba(125,211,252,.18);
+  background:linear-gradient(135deg,rgba(2,8,20,.98),rgba(4,18,38,.92));
+  z-index:10;
 }
 .kicker{
-  margin:0;
-  color:#8eefff;
-  font-size:10px;
-  font-weight:950;
-  letter-spacing:.18em;
-  text-transform:uppercase;
+  color:#8eefff;font-size:9px;font-weight:950;
+  letter-spacing:.18em;text-transform:uppercase;
 }
 .title{
-  margin:4px 0 0;
-  font-size:clamp(30px,4.2vw,50px);
-  line-height:.95;
-  letter-spacing:-.045em;
+  font-size:clamp(16px,2vw,26px);
+  line-height:1.1;letter-spacing:-.03em;
   white-space:nowrap;
 }
 .title span{color:#8eefff}
 .subtitle{
-  margin:0;
-  justify-self:end;
-  max-width:650px;
-  color:var(--muted);
-  font-size:12px;
-  line-height:1.45;
+  flex:1;
+  color:var(--muted);font-size:10.5px;line-height:1.4;
+  border-left:1px solid rgba(125,211,252,.18);
+  padding-left:18px;
+  max-width:480px;
 }
 .subtitle strong{color:#fef3c7}
 
+/* ── SCENE (left) ── */
 .sceneWrap{
+  grid-column:1;grid-row:2;
   position:relative;
-  min-width:0;
-  min-height:0;
   overflow:hidden;
-  background:radial-gradient(circle at 48% 38%,#07203a 0,#020814 52%,#00040c 100%);
+  background:radial-gradient(circle at 48% 42%,#07203a 0,#020814 56%,#00040c 100%);
 }
 #three-canvas{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  display:block;
-  z-index:1;
+  position:absolute;inset:0;
+  width:100%;height:100%;display:block;z-index:1;
 }
 .vignette{
-  position:absolute;
-  inset:0;
-  z-index:2;
-  pointer-events:none;
-  background:radial-gradient(circle at center,transparent 0 51%,rgba(0,4,12,.24) 76%,rgba(0,0,0,.64) 100%);
+  position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:radial-gradient(circle at center,transparent 0 50%,rgba(0,4,12,.20) 75%,rgba(0,0,0,.55) 100%);
 }
 .scanline{
-  position:absolute;
-  inset:0;
-  z-index:3;
-  pointer-events:none;
-  opacity:.052;
+  position:absolute;inset:0;z-index:3;pointer-events:none;
+  opacity:.045;
   background:repeating-linear-gradient(0deg,rgba(255,255,255,.08) 0 1px,transparent 1px 4px);
   mix-blend-mode:screen;
 }
-
-.sceneStatus,.sceneWarning{
-  position:absolute;
-  bottom:86px;
-  z-index:10;
-  padding:10px 12px;
-  border-radius:16px;
-  backdrop-filter:blur(12px);
-  max-width:calc(50% - 24px);
-}
 .sceneStatus{
-  left:18px;
-  background:rgba(2,8,20,.68);
+  position:absolute;left:14px;top:12px;z-index:10;
+  padding:7px 11px;border-radius:12px;
+  backdrop-filter:blur(12px);
+  background:rgba(2,8,20,.70);
   border:1px solid rgba(56,223,255,.28);
-  color:#d7f8ff;
-  font-size:12px;
-  font-weight:850;
-  letter-spacing:.04em;
+  color:#d7f8ff;font-size:11px;font-weight:850;letter-spacing:.04em;
+  max-width:calc(100% - 28px);
 }
 .sceneWarning{
-  right:18px;
-  color:#fde68a;
+  position:absolute;left:14px;top:52px;z-index:10;
+  padding:6px 11px;border-radius:12px;
+  backdrop-filter:blur(12px);
   background:rgba(2,8,20,.64);
   border:1px solid rgba(245,158,11,.28);
-  font-size:11px;
-  font-weight:900;
-  letter-spacing:.08em;
-  text-transform:uppercase;
+  color:#fde68a;font-size:10px;font-weight:900;
+  letter-spacing:.08em;text-transform:uppercase;
+  max-width:calc(100% - 28px);
+}
+.noWebgl{
+  position:absolute;inset:0;z-index:20;display:none;
+  place-items:center;padding:24px;background:#020814;
+  color:#eaf6ff;text-align:center;
 }
 
-.dock{
-  position:absolute;
-  left:50%;
-  bottom:18px;
-  transform:translateX(-50%);
-  z-index:9;
-  display:flex;
-  gap:10px;
-  max-width:calc(100% - 300px);
-  overflow-x:auto;
-  padding:9px;
-  border-radius:20px;
-  background:rgba(2,8,20,.72);
-  border:1px solid var(--edge);
-  box-shadow:0 18px 60px rgba(0,0,0,.38);
-  backdrop-filter:blur(14px);
-}
-.btn{
-  cursor:pointer;
-  border:1px solid rgba(125,211,252,.38);
-  border-radius:14px;
-  padding:10px 13px;
-  background:linear-gradient(180deg,rgba(8,47,73,.88),rgba(3,18,35,.86));
-  color:#ecfbff;
-  font-size:12px;
-  font-weight:900;
-  letter-spacing:.06em;
-  text-transform:uppercase;
-  white-space:nowrap;
-  transition:transform .16s ease,border-color .16s ease,background .16s ease;
-}
-.btn:hover,.btn.active{
-  transform:translateY(-1px);
-  border-color:rgba(56,223,255,.75);
-  background:linear-gradient(135deg,rgba(56,223,255,.32),rgba(192,132,252,.28));
-}
-
+/* ── SIDE RAIL (right) ── */
 .sideRail{
-  height:100vh;
+  grid-column:2;grid-row:2;
+  height:100%;
   overflow-y:auto;
-  padding:18px 16px;
-  border-left:1px solid rgba(125,211,252,.22);
-  background:
-    radial-gradient(circle at 65% 0%,rgba(56,223,255,.13),transparent 32%),
-    linear-gradient(180deg,rgba(2,8,20,.98),rgba(4,18,36,.94));
-  box-shadow:-20px 0 80px rgba(0,0,0,.40);
+  overflow-x:hidden;
+  padding:14px 14px 18px;
+  border-left:1px solid rgba(125,211,252,.16);
+  background:linear-gradient(180deg,rgba(3,10,24,.97),rgba(4,16,34,.94));
+  display:flex;
+  flex-direction:column;
+  gap:10px;
 }
+.sideRail::-webkit-scrollbar{width:4px}
+.sideRail::-webkit-scrollbar-track{background:transparent}
+.sideRail::-webkit-scrollbar-thumb{background:rgba(56,223,255,.24);border-radius:4px}
+
 .railHeader{
-  margin-bottom:14px;
-  padding:14px;
-  border-radius:20px;
-  border:1px solid rgba(125,211,252,.25);
+  padding:12px;border-radius:16px;
+  border:1px solid rgba(125,211,252,.22);
   background:rgba(2,8,20,.40);
+  flex-shrink:0;
 }
 .railHeader .eyebrow{
-  margin:0;
-  color:#8eefff;
-  font-size:10px;
-  font-weight:950;
-  letter-spacing:.16em;
-  text-transform:uppercase;
+  color:#8eefff;font-size:9px;font-weight:950;
+  letter-spacing:.16em;text-transform:uppercase;
 }
 .railHeader h2{
-  margin:7px 0 6px;
-  color:#ecfbff;
-  font-size:22px;
-  line-height:1;
-  letter-spacing:-.03em;
+  color:#ecfbff;font-size:18px;line-height:1;
+  letter-spacing:-.03em;margin:6px 0 5px;
 }
 .railHeader p{
-  margin:0;
-  color:#a9bbcb;
-  font-size:12px;
-  line-height:1.42;
+  color:#a9bbcb;font-size:11px;line-height:1.4;
 }
 
+/* mode buttons */
+.modeGrid{
+  display:grid;grid-template-columns:1fr 1fr;gap:7px;flex-shrink:0;
+}
+.btn{
+  border:1px solid rgba(125,211,252,.32);
+  border-radius:12px;padding:9px 10px;
+  background:linear-gradient(180deg,rgba(8,47,73,.85),rgba(3,18,35,.82));
+  color:#ecfbff;font-size:11px;font-weight:900;
+  letter-spacing:.05em;text-transform:uppercase;
+  transition:transform .14s,border-color .14s,background .14s;
+}
+.btn:hover{transform:translateY(-1px);border-color:rgba(56,223,255,.65)}
+.btn.active{
+  border-color:rgba(56,223,255,.78);
+  background:linear-gradient(135deg,rgba(56,223,255,.30),rgba(192,132,252,.24));
+}
+
+/* tabs */
 .tabs{
-  display:grid;
-  grid-template-columns:1fr 1fr 1fr 1fr;
-  gap:7px;
-  margin-bottom:12px;
+  display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;flex-shrink:0;
 }
 .tab{
-  cursor:pointer;
-  border:1px solid rgba(125,211,252,.24);
-  border-radius:13px;
-  padding:9px 7px;
-  background:rgba(8,47,73,.35);
-  color:#dff8ff;
-  font-size:10px;
-  font-weight:900;
-  letter-spacing:.07em;
-  text-transform:uppercase;
+  border:1px solid rgba(125,211,252,.20);border-radius:10px;
+  padding:7px 4px;
+  background:rgba(8,47,73,.30);
+  color:#dff8ff;font-size:9.5px;font-weight:900;
+  letter-spacing:.06em;text-transform:uppercase;
 }
 .tab.active{
-  border-color:rgba(56,223,255,.72);
-  background:linear-gradient(135deg,rgba(56,223,255,.28),rgba(192,132,252,.22));
+  border-color:rgba(56,223,255,.68);
+  background:linear-gradient(135deg,rgba(56,223,255,.26),rgba(192,132,252,.20));
 }
 
-.railPanel{
-  display:none;
-  border:1px solid rgba(125,211,252,.26);
-  border-radius:20px;
-  background:linear-gradient(180deg,rgba(2,8,20,.72),rgba(5,18,36,.56));
-  box-shadow:0 18px 60px rgba(0,0,0,.24);
-  backdrop-filter:blur(12px);
-  padding:14px;
-}
-.railPanel.active{display:block}
-.railPanel h3{
-  margin:0 0 11px;
-  color:#9ef1ff;
-  font-size:12px;
-  font-weight:950;
-  letter-spacing:.14em;
-  text-transform:uppercase;
-}
-.railPanel p{
-  margin:0 0 10px;
-  color:#c4d3e4;
-  font-size:12px;
-  line-height:1.45;
-}
-.railPanel strong,.lens b{color:#fef3c7}
+/* panels */
+.railPanel{display:none}
+.railPanel.active{display:flex;flex-direction:column;gap:8px}
 
 .pipelineAction{
   width:100%;
-  margin:0 0 12px;
-  cursor:pointer;
-  border:1px solid rgba(245,158,11,.48);
-  border-radius:16px;
-  padding:12px 13px;
-  background:linear-gradient(135deg,rgba(245,158,11,.28),rgba(56,223,255,.18));
-  color:#fff7cc;
-  font-size:12px;
-  font-weight:950;
-  letter-spacing:.09em;
-  text-transform:uppercase;
-  box-shadow:0 14px 38px rgba(0,0,0,.28),0 0 22px rgba(245,158,11,.10);
+  border:1px solid rgba(245,158,11,.46);border-radius:13px;padding:11px 12px;
+  background:linear-gradient(135deg,rgba(245,158,11,.26),rgba(56,223,255,.16));
+  color:#fff7cc;font-size:11px;font-weight:950;
+  letter-spacing:.08em;text-transform:uppercase;
+  transition:border-color .14s,transform .14s;
 }
-.pipelineAction:hover{
-  border-color:rgba(245,158,11,.80);
-  transform:translateY(-1px);
-}
+.pipelineAction:hover{border-color:rgba(245,158,11,.78);transform:translateY(-1px)}
 .pipelineAction.active{
-  border-color:rgba(56,223,255,.84);
-  background:linear-gradient(135deg,rgba(56,223,255,.30),rgba(245,158,11,.24));
+  border-color:rgba(56,223,255,.80);
+  background:linear-gradient(135deg,rgba(56,223,255,.28),rgba(245,158,11,.22));
   color:#ecfbff;
 }
 
-.metric{margin:9px 0 11px}
+.metric{display:flex;flex-direction:column;gap:4px}
 .metric-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  margin-bottom:6px;
-  font-size:10px;
-  font-weight:900;
-  letter-spacing:.08em;
-  text-transform:uppercase;
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:9.5px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;
 }
 .metric-head span:first-child{color:#d8f7ff}
 .metric-head span:last-child{color:#fde68a}
 .meter{
-  position:relative;
-  overflow:hidden;
-  height:7px;
-  border-radius:999px;
-  background:rgba(15,45,70,.70);
-  border:1px solid rgba(125,211,252,.18);
+  position:relative;overflow:hidden;height:6px;border-radius:999px;
+  background:rgba(15,45,70,.70);border:1px solid rgba(125,211,252,.16);
 }
 .meter i{
-  position:absolute;
-  left:0;
-  top:0;
-  bottom:0;
-  width:0%;
-  border-radius:999px;
+  position:absolute;left:0;top:0;bottom:0;width:0%;border-radius:999px;
   background:linear-gradient(90deg,rgba(56,223,255,.82),rgba(192,132,252,.74),rgba(245,158,11,.70));
-  box-shadow:0 0 18px rgba(56,223,255,.22);
+  transition:width .6s ease;
 }
 
 .statebox{
-  margin-top:10px;
-  padding:10px;
-  border-radius:16px;
-  background:rgba(8,47,73,.26);
-  border:1px solid rgba(125,211,252,.22);
+  padding:10px;border-radius:13px;
+  background:rgba(8,47,73,.24);border:1px solid rgba(125,211,252,.20);
 }
 .statebox b{
-  display:block;
-  margin-bottom:4px;
-  color:#fef3c7;
-  font-size:10px;
-  letter-spacing:.08em;
-  text-transform:uppercase;
+  display:block;margin-bottom:4px;
+  color:#fef3c7;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
 }
-.statebox span{
-  color:#c4d3e4;
-  font-size:11px;
-  line-height:1.42;
-}
+.statebox span{color:#c4d3e4;font-size:11px;line-height:1.4}
 
-.lens{
-  display:grid;
-  gap:8px;
+.railPanel h3{
+  color:#9ef1ff;font-size:11px;font-weight:950;letter-spacing:.12em;text-transform:uppercase;
 }
+.railPanel p{color:#c4d3e4;font-size:11px;line-height:1.42}
+.railPanel strong,.lens b{color:#fef3c7}
+
+.bandGrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.band{border:1px solid rgba(125,211,252,.16);border-radius:12px;padding:9px;background:rgba(2,8,20,.32)}
+.band b{display:block;color:#eaf6ff;font-size:10px;letter-spacing:.07em;text-transform:uppercase}
+.band span{color:#9fb3c8;font-size:9.5px}
+
+.lens{display:grid;gap:7px}
 .lens div{
-  padding:10px;
-  border-radius:15px;
-  border:1px solid rgba(125,211,252,.18);
-  background:rgba(2,8,20,.34);
-  color:#c4d3e4;
-  font-size:11px;
-  line-height:1.42;
+  padding:9px;border-radius:12px;
+  border:1px solid rgba(125,211,252,.16);background:rgba(2,8,20,.32);
+  color:#c4d3e4;font-size:11px;line-height:1.4;
 }
 .lens span{
-  display:block;
-  margin-bottom:2px;
-  color:#8eefff;
-  font-weight:950;
-  letter-spacing:.08em;
-  text-transform:uppercase;
+  display:block;margin-bottom:2px;
+  color:#8eefff;font-weight:950;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
 }
-.bandGrid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-  margin-top:10px;
-}
-.band{
-  border:1px solid rgba(125,211,252,.18);
-  border-radius:15px;
-  padding:10px;
-  background:rgba(2,8,20,.34);
-}
-.band b{
-  display:block;
-  color:#eaf6ff;
-  font-size:11px;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-}
-.band span{
-  color:#9fb3c8;
-  font-size:10px;
-}
+
 .warn{
-  margin-top:12px;
-  padding:11px;
-  border:1px solid rgba(245,158,11,.28);
-  border-radius:16px;
-  background:rgba(120,53,15,.16);
-  color:#fde68a;
-  font-size:11px;
-  line-height:1.42;
-  font-weight:760;
+  padding:10px;border:1px solid rgba(245,158,11,.26);border-radius:13px;
+  background:rgba(120,53,15,.14);color:#fde68a;font-size:10.5px;line-height:1.4;
 }
 .footLink{
   display:inline-flex;
-  margin-top:11px;
-  border:1px solid rgba(125,211,252,.26);
-  border-radius:14px;
-  padding:9px 10px;
-  color:#ecfbff;
-  text-decoration:none;
-  font-size:11px;
-  font-weight:900;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  background:rgba(8,47,73,.32);
+  border:1px solid rgba(125,211,252,.24);border-radius:11px;padding:8px 10px;
+  color:#ecfbff;text-decoration:none;font-size:10.5px;font-weight:900;
+  letter-spacing:.07em;text-transform:uppercase;background:rgba(8,47,73,.28);
 }
-.footLink:hover{border-color:rgba(56,223,255,.72)}
-.noWebgl{
-  position:absolute;
-  inset:0;
-  z-index:20;
-  display:none;
-  place-items:center;
-  padding:24px;
-  background:#020814;
-  color:#eaf6ff;
-  text-align:center;
+.footLink:hover{border-color:rgba(56,223,255,.68)}
+
+/* electrode legend */
+.electrodeLegend{
+  padding:10px;border-radius:13px;
+  border:1px solid rgba(125,211,252,.18);background:rgba(2,8,20,.30);
+}
+.electrodeLegend b{
+  display:block;margin-bottom:7px;
+  color:#8eefff;font-size:9.5px;font-weight:950;letter-spacing:.10em;text-transform:uppercase;
+}
+.legendGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.legendItem{
+  display:flex;align-items:center;gap:5px;
+  font-size:10px;color:#c4d3e4;
+}
+.legendDot{
+  width:9px;height:9px;border-radius:50%;flex-shrink:0;
 }
 
-@media(max-width:980px){
-  :root{--header:auto}
-  .page{
-    height:auto;
-    min-height:100vh;
-    grid-template-columns:1fr;
-    overflow:visible;
-  }
-  .visualCol{
-    height:72vh;
-    min-height:660px;
-    grid-template-rows:auto minmax(520px,1fr);
-  }
-  .sideRail{
-    height:auto;
-    min-height:420px;
-    border-left:0;
-    border-top:1px solid rgba(125,211,252,.22);
-  }
-  .headerBox{
-    grid-template-columns:1fr;
-    gap:8px;
-  }
-  .title{white-space:normal}
-  .subtitle{justify-self:start}
-  .dock{max-width:calc(100% - 24px)}
-  .sceneStatus,.sceneWarning{
-    position:absolute;
-    max-width:calc(100% - 36px);
-    left:18px;
-    right:auto;
-  }
-  .sceneWarning{bottom:128px}
+/* responsive */
+@media(max-width:900px){
+  :root{--rail:300px}
+  .title{font-size:15px}
 }
-@media(max-width:560px){
-  .visualCol{min-height:720px}
-  .topHeader{padding:16px}
-  .tabs{grid-template-columns:1fr 1fr}
-  .bandGrid{grid-template-columns:1fr}
-  .dock{
-    left:12px;
-    right:12px;
-    transform:none;
-    justify-content:flex-start;
+@media(max-width:680px){
+  .page{
+    grid-template-columns:1fr;
+    grid-template-rows:60px 1fr var(--rail);
+    height:auto;min-height:100vh;
   }
+  .topHeader{grid-column:1;grid-row:1}
+  .sceneWrap{grid-column:1;grid-row:2}
+  .sideRail{
+    grid-column:1;grid-row:3;
+    border-left:none;border-top:1px solid rgba(125,211,252,.16);
+    height:auto;
+  }
+  .subtitle{display:none}
+  :root{--rail:480px}
 }
 </style>
 </head>
 
 <body>
 <div class="page">
-  <section class="visualCol" aria-label="Visualización EEG Observability">
-    <header class="topHeader">
-      <div class="headerBox">
-        <div>
-          <p class="kicker">MOU/R³ · EEG Observability</p>
-          <h1 class="title">Lectura multicanal de <span>observabilidad cerebral</span>.</h1>
-        </div>
-        <p class="subtitle">
-          Vista exploratoria para EEG: bandas, sincronía espacial, ventanas, artefactos y compuerta de claim.
-          <strong>No diagnostica</strong>, no interpreta estados mentales y no reemplaza lectura clínica experta.
-        </p>
-      </div>
-    </header>
 
-    <div class="sceneWrap">
-      <canvas id="three-canvas"></canvas>
-      <div class="vignette"></div>
-      <div class="scanline"></div>
-      <div class="sceneStatus" id="sceneStatus">Estado: alfa posterior estable · zona de lectura útil</div>
-      <div class="sceneWarning">Investigación visual · no diagnóstico clínico</div>
-      <div class="dock" aria-label="Escenarios EEG">
-        <button class="btn active" data-mode="alpha">Alfa estable</button>
-        <button class="btn" data-mode="theta">Somnolencia</button>
-        <button class="btn" data-mode="spike">Evento transitorio</button>
-        <button class="btn" data-mode="artifact">Artefacto</button>
-      </div>
-      <div class="noWebgl" id="noWebgl">
-        <div>
-          <h2>No se pudo iniciar WebGL</h2>
-          <p>La página mantiene su lectura explicativa, pero la escena 3D requiere WebGL activo.</p>
-        </div>
+  <!-- HEADER -->
+  <header class="topHeader">
+    <div>
+      <p class="kicker">MOU/R³ · EEG Observability</p>
+      <h1 class="title">Lectura multicanal de <span>observabilidad cerebral</span></h1>
+    </div>
+    <p class="subtitle">
+      Vista exploratoria: bandas, sincronía espacial, ventanas, artefactos y compuerta de claim.
+      <strong>No diagnostica</strong> ni reemplaza lectura clínica experta.
+    </p>
+  </header>
+
+  <!-- ESCENA 3D -->
+  <div class="sceneWrap">
+    <canvas id="three-canvas"></canvas>
+    <div class="vignette"></div>
+    <div class="scanline"></div>
+    <div class="sceneStatus" id="sceneStatus">Estado: alfa posterior estable · zona de lectura útil</div>
+    <div class="sceneWarning">Investigación visual · no diagnóstico clínico</div>
+    <div class="noWebgl" id="noWebgl">
+      <div>
+        <h2>No se pudo iniciar WebGL</h2>
+        <p>La escena 3D requiere WebGL activo.</p>
       </div>
     </div>
-  </section>
+  </div>
 
+  <!-- PANEL LATERAL -->
   <aside class="sideRail" aria-label="Panel técnico EEG">
+
     <div class="railHeader">
       <p class="eyebrow">Exploratory claim gate</p>
       <h2>EEG bajo MOU/R³</h2>
-      <p>La pregunta no es “qué piensa el sujeto”, sino cuándo una señal multicanal deja de ser ruido operativo y empieza a mostrar estructura interpretable bajo escala, ventana y controles.</p>
+      <p>¿Cuándo una señal multicanal deja de ser ruido y muestra estructura interpretable bajo escala, ventana y controles?</p>
     </div>
 
+    <!-- MODO: botones -->
+    <div class="modeGrid">
+      <button class="btn active" data-mode="alpha">Alfa estable</button>
+      <button class="btn" data-mode="theta">Somnolencia</button>
+      <button class="btn" data-mode="spike">Transitorio</button>
+      <button class="btn" data-mode="artifact">Artefacto</button>
+    </div>
+
+    <!-- TABS -->
     <div class="tabs">
       <button class="tab active" data-tab="lectura">Lectura</button>
       <button class="tab" data-tab="bandas">Bandas</button>
@@ -549,8 +368,9 @@ button{font:inherit}
       <button class="tab" data-tab="limites">Límites</button>
     </div>
 
+    <!-- PANEL LECTURA -->
     <section class="railPanel active" id="panel-lectura">
-      <button class="pipelineAction" id="pipelineBtn">Reproducir lectura EEG</button>
+      <button class="pipelineAction" id="pipelineBtn">▶ Reproducir lectura EEG</button>
 
       <div class="metric">
         <div class="metric-head"><span>Ω/R³ observabilidad</span><span id="omegaVal">0.71</span></div>
@@ -567,41 +387,51 @@ button{font:inherit}
 
       <div class="statebox">
         <b id="stateTitle">Ventana candidata</b>
-        <span id="stateText">Ritmo alfa posterior relativamente estable, baja contaminación simulada y lectura compatible con zona útil. El claim queda como visualización exploratoria.</span>
+        <span id="stateText">Ritmo alfa posterior estable, baja contaminación simulada y lectura compatible con zona útil. Claim como visualización exploratoria.</span>
+      </div>
+
+      <!-- leyenda electrodos -->
+      <div class="electrodeLegend">
+        <b>Electrodos activos (sistema 10-20)</b>
+        <div class="legendGrid" id="electrodeLegendGrid"></div>
       </div>
     </section>
 
+    <!-- PANEL BANDAS -->
     <section class="railPanel" id="panel-bandas">
       <h3>Bandas EEG aproximadas</h3>
-      <p>La escena separa la señal en ritmos didácticos. Las fronteras no deben tratarse como cortes ontológicos rígidos: son convenciones de lectura.</p>
+      <p>La escena separa la señal en ritmos didácticos. Las fronteras no son cortes ontológicos rígidos: son convenciones de lectura.</p>
       <div class="bandGrid">
-        <div class="band"><b>Delta</b><span>&lt; 4 Hz · sueño profundo / lentitud</span></div>
-        <div class="band"><b>Theta</b><span>4–7 Hz · somnolencia / transición</span></div>
+        <div class="band"><b>Delta</b><span>&lt;4 Hz · sueño profundo</span></div>
+        <div class="band"><b>Theta</b><span>4–7 Hz · somnolencia</span></div>
         <div class="band"><b>Alpha</b><span>8–12 Hz · reposo posterior</span></div>
         <div class="band"><b>Beta</b><span>13–30 Hz · actividad rápida</span></div>
-        <div class="band"><b>Gamma</b><span>30+ Hz · lectura delicada por EMG</span></div>
-        <div class="band"><b>Transitorios</b><span>spikes / sharp waves requieren experto</span></div>
+        <div class="band"><b>Gamma</b><span>30+ Hz · delicada/EMG</span></div>
+        <div class="band"><b>Transi&shy;torios</b><span>spikes · experto</span></div>
       </div>
-      <div class="warn">MOU no convierte bandas en diagnóstico: las usa como lentes auditables junto a ventana, canal, artefactos y control nulo.</div>
+      <div class="warn">MOU no convierte bandas en diagnóstico: las usa como lentes auditables junto a ventana, canal y control nulo.</div>
     </section>
 
+    <!-- PANEL MOU -->
     <section class="railPanel" id="panel-mou">
       <h3>Qué miraría MOU</h3>
       <div class="lens">
-        <div><span>ε observacional</span><b>Demasiado cerca</b>: microvariación, ruido, parpadeo o EMG pueden dominar. <b>Demasiado lejos</b>: el promedio borra eventos transitorios.</div>
-        <div><span>τ / ventana</span>Evalúa si la reconstrucción conserva relación temporal sin redundancia excesiva ni pérdida de estructura.</div>
-        <div><span>R³</span>Busca co-estabilización: ritmo, geometría, complejidad y coherencia espacial convergen sin ser explicados por surrogates.</div>
+        <div><span>ε observacional</span><b>Demasiado cerca</b>: microvariación, ruido. <b>Demasiado lejos</b>: el promedio borra eventos transitorios.</div>
+        <div><span>τ / ventana</span>Reconstrucción que conserva relación temporal sin redundancia excesiva ni pérdida de estructura.</div>
+        <div><span>R³</span>Co-estabilización: ritmo, geometría, complejidad y coherencia espacial convergen sin ser explicados por surrogates.</div>
         <div><span>Claim gate</span>Si artefactos o controles explican la lectura, se bloquea el claim y queda como observación técnica.</div>
       </div>
     </section>
 
+    <!-- PANEL LÍMITES -->
     <section class="railPanel" id="panel-limites">
       <h3>Límites explícitos</h3>
-      <p>EEG de cuero cabelludo tiene gran resolución temporal, pero baja especificidad espacial. La señal puede estar contaminada por parpadeos, músculos, movimiento, mala impedancia o ruido de línea.</p>
-      <p>Esta sección debe decirlo de frente: <strong>no diagnostica epilepsia, sueño, lesión, conciencia ni emoción</strong>. Solo muestra cómo MOU/R³ podría ordenar una lectura exploratoria.</p>
-      <div class="warn">Para pasar de visualización a uso real harían falta dataset etiquetado, protocolo reproducible, comparación contra métodos establecidos, revisión clínica y validación externa.</div>
-      <a class="footLink" href="index.html">Volver a MOU</a>
+      <p>EEG de cuero cabelludo tiene gran resolución temporal, pero baja especificidad espacial. Contaminación por parpadeos, músculos, movimiento o mala impedancia.</p>
+      <p><strong>No diagnostica epilepsia, sueño, lesión, conciencia ni emoción.</strong> Solo muestra cómo MOU/R³ ordenaría una lectura exploratoria.</p>
+      <div class="warn">Para uso real: dataset etiquetado, protocolo reproducible, comparación contra métodos establecidos, revisión clínica y validación externa.</div>
+      <a class="footLink" href="index.html">← Volver a MOU</a>
     </section>
+
   </aside>
 </div>
 
@@ -624,48 +454,134 @@ const metrics = {
   artMeter: document.getElementById('artMeter')
 };
 
+// ── MODES ──────────────────────────────────────────────
 const MODES = {
   alpha: {
     label:'Alfa posterior estable',
     status:'Estado: alfa posterior estable · zona de lectura útil',
     omega:.71, coh:.66, art:.18,
-    color:0x38dfff,
+    color:0x38dfff, colorHex:'#38dfff',
     title:'Ventana candidata',
-    text:'Ritmo alfa posterior relativamente estable, baja contaminación simulada y lectura compatible con zona útil. El claim queda como visualización exploratoria.',
-    speed:.72, amp:.22, posterior:1.0, chaos:.08
+    text:'Ritmo alfa posterior estable, baja contaminación simulada y lectura compatible con zona útil. Claim como visualización exploratoria.',
+    speed:.72, amp:.22, chaos:.08,
+    // per-electrode activity map: 0=silent, 1=low, 2=med, 3=high
+    activity:{
+      Fp1:.3,Fp2:.3,F3:.5,F4:.5,Fz:.4,
+      C3:.6,C4:.6,Cz:.5,
+      T3:.4,T4:.4,
+      P3:.9,P4:.9,Pz:.95,
+      O1:1.0,O2:1.0
+    }
   },
   theta: {
     label:'Somnolencia / transición',
     status:'Estado: aumento theta · transición de régimen',
     omega:.57, coh:.49, art:.25,
-    color:0xc084fc,
+    color:0xc084fc, colorHex:'#c084fc',
     title:'Cambio de régimen',
-    text:'La ventana sugiere transición funcional: más lentitud, menor estabilidad espacial y necesidad de segmentar antes de reclamar patrón útil.',
-    speed:.46, amp:.30, posterior:.45, chaos:.14
+    text:'Transición funcional: más lentitud, menor estabilidad espacial y necesidad de segmentar antes de reclamar patrón útil.',
+    speed:.46, amp:.30, chaos:.14,
+    activity:{
+      Fp1:.5,Fp2:.5,F3:.7,F4:.7,Fz:.8,
+      C3:.7,C4:.7,Cz:.8,
+      T3:.6,T4:.6,
+      P3:.5,P4:.5,Pz:.4,
+      O1:.3,O2:.3
+    }
   },
   spike: {
     label:'Evento transitorio',
     status:'Estado: evento transitorio · requiere auditoría experta',
     omega:.62, coh:.58, art:.31,
-    color:0xf59e0b,
+    color:0xf59e0b, colorHex:'#f59e0b',
     title:'Transitorio bajo auditoría',
-    text:'El evento aparece como descarga breve en algunos canales. No se interpreta como epileptiforme sin dataset, montaje, contexto clínico y lectura experta.',
-    speed:1.18, amp:.36, posterior:.62, chaos:.22
+    text:'Descarga breve en canales temporales y centrales izquierdos. No se interpreta como epileptiforme sin dataset, montaje y lectura experta.',
+    speed:1.18, amp:.36, chaos:.22,
+    activity:{
+      Fp1:.4,Fp2:.3,F3:.7,F4:.4,Fz:.6,
+      C3:1.0,C4:.5,Cz:.7,
+      T3:1.0,T4:.4,
+      P3:.9,P4:.4,Pz:.5,
+      O1:.5,O2:.3
+    }
   },
   artifact: {
     label:'Artefacto probable',
     status:'Estado: contaminación simulada · claim bloqueado',
     omega:.28, coh:.22, art:.84,
-    color:0xfb7185,
+    color:0xfb7185, colorHex:'#fb7185',
     title:'Claim bloqueado',
-    text:'La lectura queda dominada por contaminación compatible con parpadeo, músculo, movimiento o mala impedancia. MOU/R³ no debe reclamar señal útil.',
-    speed:1.65, amp:.48, posterior:.22, chaos:.62
+    text:'Dominado por contaminación compatible con parpadeo, músculo, movimiento o mala impedancia. MOU/R³ bloquea el claim.',
+    speed:1.65, amp:.48, chaos:.62,
+    activity:{
+      Fp1:1.0,Fp2:1.0,F3:.8,F4:.8,Fz:.9,
+      C3:.5,C4:.5,Cz:.6,
+      T3:.7,T4:.7,
+      P3:.4,P4:.4,Pz:.3,
+      O1:.3,O2:.3
+    }
   }
 };
 
 let modeName = 'alpha';
 let mode = MODES[modeName];
 
+// ── ELECTRODE CONFIG (sistema 10-20, posiciones INTERNAS al cerebro) ──
+// Cada electrodo tiene: nombre, posición 3D dentro del volumen cortical, 
+// región funcional, color base por región
+const ELECTRODES = [
+  // Frontales
+  {name:'Fp1', pos:[-0.55, 0.52, 0.88], region:'frontal'},
+  {name:'Fp2', pos:[ 0.55, 0.52, 0.88], region:'frontal'},
+  {name:'F3',  pos:[-0.72, 0.32, 0.44], region:'frontal'},
+  {name:'F4',  pos:[ 0.72, 0.32, 0.44], region:'frontal'},
+  {name:'Fz',  pos:[ 0.00, 0.44, 0.40], region:'frontal'},
+  // Centrales (motor/somatosensorial)
+  {name:'C3',  pos:[-0.85, 0.05, 0.00], region:'central'},
+  {name:'C4',  pos:[ 0.85, 0.05, 0.00], region:'central'},
+  {name:'Cz',  pos:[ 0.00, 0.62,-0.05], region:'central'},
+  // Temporales
+  {name:'T3',  pos:[-1.00,-0.05, 0.00], region:'temporal'},
+  {name:'T4',  pos:[ 1.00,-0.05, 0.00], region:'temporal'},
+  // Parietales
+  {name:'P3',  pos:[-0.68,-0.22,-0.56], region:'parietal'},
+  {name:'P4',  pos:[ 0.68,-0.22,-0.56], region:'parietal'},
+  {name:'Pz',  pos:[ 0.00, 0.22,-0.60], region:'parietal'},
+  // Occipitales
+  {name:'O1',  pos:[-0.40,-0.36,-0.92], region:'occipital'},
+  {name:'O2',  pos:[ 0.40,-0.36,-0.92], region:'occipital'},
+];
+
+const REGION_COLORS = {
+  frontal:  0x38dfff,  // cyan
+  central:  0x6ee7b7,  // green
+  temporal: 0xc084fc,  // violet
+  parietal: 0xf59e0b,  // amber
+  occipital:0xfb7185,  // red/pink
+};
+
+const REGION_LABEL = {
+  frontal:'Frontal', central:'Central',
+  temporal:'Temporal', parietal:'Parietal', occipital:'Occipital'
+};
+
+// Build electrode legend
+const legendGrid = document.getElementById('electrodeLegendGrid');
+const regionSeen = {};
+ELECTRODES.forEach(e => {
+  const item = document.createElement('div');
+  item.className = 'legendItem';
+  const dotEl = document.createElement('div');
+  dotEl.className = 'legendDot';
+  const hexStr = '#' + REGION_COLORS[e.region].toString(16).padStart(6,'0');
+  dotEl.style.background = hexStr;
+  dotEl.style.boxShadow = `0 0 6px ${hexStr}`;
+  item.appendChild(dotEl);
+  item.appendChild(document.createTextNode(e.name));
+  legendGrid.appendChild(item);
+});
+
+// ── METRICS ────────────────────────────────────────────
 function setMetric(valueEl, meterEl, v){
   valueEl.textContent = v.toFixed(2);
   meterEl.style.width = Math.round(v * 100) + '%';
@@ -699,15 +615,17 @@ document.querySelectorAll('.tab[data-tab]').forEach(tab=>{
 });
 
 document.getElementById('pipelineBtn').addEventListener('click', e=>{
-  e.currentTarget.classList.toggle('active');
-  e.currentTarget.textContent = e.currentTarget.classList.contains('active')
-    ? 'Lectura EEG en reproducción'
-    : 'Reproducir lectura EEG';
+  const btn = e.currentTarget;
+  btn.classList.toggle('active');
+  btn.textContent = btn.classList.contains('active')
+    ? '⏸ Lectura EEG en reproducción'
+    : '▶ Reproducir lectura EEG';
 });
 
+// ── WEBGL ───────────────────────────────────────────────
 let renderer;
 try{
-  renderer = new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
 }catch(e){
   noWebgl.style.display = 'grid';
   throw e;
@@ -715,184 +633,328 @@ try{
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
-camera.position.set(0, 2.3, 7.0);
+camera.position.set(0, 1.8, 6.2);
 
-renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-renderer.setClearColor(0x020814, 1);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.12;
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
+controls.dampingFactor = 0.065;
+controls.minDistance = 3.5;
+controls.maxDistance = 12;
 controls.enablePan = false;
-controls.minDistance = 4.2;
-controls.maxDistance = 10;
-controls.autoRotate = true;
-controls.autoRotateSpeed = .55;
 
-scene.add(new THREE.AmbientLight(0x7dd3fc, .42));
-const key = new THREE.PointLight(0x38dfff, 2.2, 12);
-key.position.set(3,4,5);
-scene.add(key);
-const fill = new THREE.PointLight(0xc084fc, 1.25, 10);
-fill.position.set(-4,-2,3);
-scene.add(fill);
+// Lights
+scene.add(new THREE.AmbientLight(0xffeeff, 0.38));
+const d1 = new THREE.DirectionalLight(0xffffff, 1.1);
+d1.position.set(2.5, 3.5, 4.0);
+scene.add(d1);
+const d2 = new THREE.DirectionalLight(0xffd4ea, 0.42);
+d2.position.set(-2.5, 1.2, -2.5);
+scene.add(d2);
+const pt1 = new THREE.PointLight(0x38dfff, 1.6, 8.0);
+pt1.position.set(0, 2.5, 3.5);
+scene.add(pt1);
 
+// ── BRAIN ──────────────────────────────────────────────
 const brain = new THREE.Group();
 scene.add(brain);
 
-const shellGeo = new THREE.SphereGeometry(1.55, 64, 48);
-shellGeo.scale(1.08, .82, 1.28);
-const shellMat = new THREE.MeshBasicMaterial({
-  color:0x38dfff,
-  transparent:true,
-  opacity:.055,
-  wireframe:true
-});
-const shell = new THREE.Mesh(shellGeo, shellMat);
-brain.add(shell);
+const cortexShells = [], holoShells = [], foldLines = [], neuralTrails = [], cerebellarMeshes = [], deepNodes = [];
 
-const innerGeo = new THREE.SphereGeometry(1.30, 48, 36);
-innerGeo.scale(1.02, .72, 1.12);
-const innerMat = new THREE.MeshBasicMaterial({
-  color:0xc084fc,
-  transparent:true,
-  opacity:.035,
-  wireframe:true
-});
-const inner = new THREE.Mesh(innerGeo, innerMat);
-inner.rotation.z = .08;
-brain.add(inner);
-
-function makeCurve(offset, color, radius=1.1){
-  const pts=[];
-  for(let i=0;i<160;i++){
-    const t=(i/159)*Math.PI*2;
-    const x=Math.cos(t)*radius;
-    const y=Math.sin(t*.92+offset)*.18;
-    const z=Math.sin(t)*radius*.74 + Math.sin(t*3+offset)*.08;
-    pts.push(new THREE.Vector3(x,y,z));
+function makeHemisphere(side, scaleX, holo){
+  const geo = new THREE.SphereGeometry(1.0, 88, 64);
+  const pos = geo.attributes.position;
+  for(let i=0;i<pos.count;i++){
+    const x=pos.getX(i), y=pos.getY(i), z=pos.getZ(i);
+    const lat=Math.atan2(Math.sqrt(x*x+z*z),y);
+    const lon=Math.atan2(z,x);
+    const gyrus=1+0.058*(Math.sin(lon*5.5+0.8)*Math.cos(lat*4.2)+Math.sin(lon*3.1+1.4)*Math.cos(lat*6.8+0.6)+Math.sin(lon*7.2+2.1)*Math.cos(lat*3.4));
+    const sulcus=1-0.022*(Math.abs(Math.sin(lon*8.4+0.5))*Math.cos(lat*5.1)+Math.abs(Math.sin(lon*4.7+1.8))*Math.cos(lat*7.3+1.2));
+    const r=gyrus*sulcus;
+    pos.setXYZ(i,x*r*scaleX*(side<0?.96:1),y*r*.88,z*r*1.08);
   }
-  const geo = new THREE.BufferGeometry().setFromPoints(pts);
-  const mat = new THREE.LineBasicMaterial({color,transparent:true,opacity:.42});
-  const line = new THREE.Line(geo,mat);
-  line.rotation.y = offset * .38;
-  return line;
+  geo.computeVertexNormals();
+  const m = holo
+    ? new THREE.MeshBasicMaterial({color:side<0?0xffc3d7:0xf8adc8,transparent:true,opacity:.032,wireframe:true})
+    : new THREE.MeshStandardMaterial({color:0xfab8ce,emissive:0x7c254b,emissiveIntensity:.28,roughness:.32,metalness:.0,transparent:true,opacity:.28});
+  const mesh = new THREE.Mesh(geo,m);
+  mesh.scale.set(side<0?.88:1,1,1);
+  mesh.position.x = side*0.08;
+  brain.add(mesh);
+  if(holo) holoShells.push(mesh); else cortexShells.push(mesh);
 }
 
-const waves = [
-  makeCurve(.0,0x38dfff,1.08),
-  makeCurve(1.7,0xc084fc,1.19),
-  makeCurve(3.2,0xf59e0b,.96),
-  makeCurve(4.4,0x6ee7b7,1.02)
-];
-waves.forEach(w=>brain.add(w));
+function makeFold(side,lane,phase,col,op){
+  const pts=[];
+  for(let i=0;i<140;i++){
+    const u=i/139;
+    const ang=-1.15+u*2.30;
+    const r=0.98+0.06*Math.sin(ang*4.8+phase);
+    pts.push(new THREE.Vector3(side*(r*Math.sin(ang)*0.88+0.08),r*Math.cos(ang)*.82,lane));
+  }
+  const geo=new THREE.BufferGeometry().setFromPoints(pts);
+  geo.userData.base=pts.map(v=>v.clone());
+  const ln=new THREE.Line(geo,new THREE.LineBasicMaterial({color:col,transparent:true,opacity:op}));
+  brain.add(ln); foldLines.push(ln);
+}
 
-const electrodePositions = [
-  ['Fp1',-.82,.74,1.08], ['Fp2',.82,.74,1.08],
-  ['F3',-.98,.42,.62], ['F4',.98,.42,.62],
-  ['C3',-1.16,.05,0], ['C4',1.16,.05,0],
-  ['T3',-1.40,-.05,.05], ['T4',1.40,-.05,.05],
-  ['P3',-.92,-.30,-.72], ['P4',.92,-.30,-.72],
-  ['O1',-.55,-.48,-1.17], ['O2',.55,-.48,-1.17],
-  ['Fz',0,.57,.58], ['Cz',0,.15,0], ['Pz',0,-.35,-.72]
-];
+function makeNeuralTrail(x1,x2,y,z,phase,col){
+  const pts=[];
+  for(let i=0;i<80;i++){
+    const u=i/79;
+    const x=x1+u*(x2-x1);
+    const dy=0.06*Math.sin(u*Math.PI*3.2+phase);
+    pts.push(new THREE.Vector3(x,y+dy,z));
+  }
+  const geo=new THREE.BufferGeometry().setFromPoints(pts);
+  geo.userData.base=pts.map(v=>v.clone());
+  const ln=new THREE.Line(geo,new THREE.LineBasicMaterial({color:col,transparent:true,opacity:.14}));
+  brain.add(ln); neuralTrails.push(ln);
+}
 
+function makeDeepNode(geo,pos,scale,col,emissive,op){
+  const mesh=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:col,emissive,emissiveIntensity:.40,roughness:.30,metalness:0,transparent:true,opacity:op}));
+  mesh.position.copy(pos);
+  mesh.scale.set(scale.x,scale.y,scale.z);
+  brain.add(mesh); deepNodes.push(mesh);
+}
+
+makeHemisphere(-1,1.0,false); makeHemisphere(1,1.0,false);
+makeHemisphere(-1,1.03,true); makeHemisphere(1,1.03,true);
+
+[-0.56,-0.40,-0.24,-0.08,0.08,0.24,0.40,0.54].forEach((lane,idx)=>{
+  makeFold(-1,lane,idx*.76+.30,idx%2?0xffc3d7:0xf8a8c4,.048+idx*.001);
+  makeFold( 1,lane,idx*.76+.54,idx%2?0xf7d3df:0xffa9c7,.048+idx*.001);
+});
+
+makeNeuralTrail(-1,1,-0.18,-0.14,0.4,0xffc3d7);
+makeNeuralTrail(-1,1, 0.08, 0.06,1.4,0xf6d4df);
+makeNeuralTrail(-1,1,-0.34,-0.30,2.0,0xf59eaf);
+
+// fissure
+const fpPts=[];
+for(let i=0;i<180;i++){
+  const u=i/179,z=-1.10+u*2.20,y=0.02+0.10*Math.cos(u*Math.PI*1.05);
+  fpPts.push(new THREE.Vector3(0,y,z));
+}
+brain.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(fpPts),new THREE.LineBasicMaterial({color:0xffd8e2,transparent:true,opacity:.26})));
+
+// deep nodes
+const thalGeo=new THREE.SphereGeometry(.24,28,22);
+makeDeepNode(thalGeo,new THREE.Vector3(-.16,-.02,.04),new THREE.Vector3(1,.84,1.06),0xffb5c9,0x7c254b,.42);
+makeDeepNode(thalGeo,new THREE.Vector3( .16,-.02,.04),new THREE.Vector3(1,.84,1.06),0xffb5c9,0x7c254b,.42);
+makeDeepNode(new THREE.SphereGeometry(.13,24,18),new THREE.Vector3(0,-.18,-.02),new THREE.Vector3(1.12,.80,1),0xff9ebb,0x76213e,.32);
+makeDeepNode(new THREE.SphereGeometry(.20,24,18),new THREE.Vector3(0,-.50,-.10),new THREE.Vector3(1.28,.92,.92),0xf2a2b8,0x592338,.28);
+makeDeepNode(new THREE.SphereGeometry(.16,22,18),new THREE.Vector3(0,-.34,-.02),new THREE.Vector3(1.02,.80,.88),0xf3adc1,0x5c2640,.26);
+
+const stemGeo=new THREE.CapsuleGeometry(.09,.40,8,16);
+const stem=new THREE.Mesh(stemGeo,new THREE.MeshStandardMaterial({color:0xe999b0,emissive:0x552437,emissiveIntensity:.24,roughness:.34,transparent:true,opacity:.28}));
+stem.rotation.z=Math.PI/2; stem.position.set(0,-.80,-.02);
+brain.add(stem); deepNodes.push(stem);
+
+// cerebellum
+function makeCerebellumLobe(side){
+  const geo=new THREE.SphereGeometry(.40,44,34);
+  const pos=geo.attributes.position;
+  for(let i=0;i<pos.count;i++){
+    const x=pos.getX(i),y=pos.getY(i),z=pos.getZ(i);
+    const ripple=1+0.10*Math.sin((x+z)*9.0)*Math.cos(y*8.0);
+    pos.setXYZ(i,x*1.08*ripple,y*.70,z*.90*ripple);
+  }
+  geo.computeVertexNormals();
+  const mesh=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:0xe69ab2,emissive:0x4e2239,emissiveIntensity:.24,roughness:.34,transparent:true,opacity:.24}));
+  mesh.position.set(side*.36,-.74,-1.06); mesh.rotation.y=side*.18;
+  brain.add(mesh); cerebellarMeshes.push(mesh);
+}
+makeCerebellumLobe(-1); makeCerebellumLobe(1);
+
+const baseGlow=new THREE.Mesh(new THREE.SphereGeometry(1.9,40,32),new THREE.MeshBasicMaterial({color:0xffa9c7,transparent:true,opacity:.036,blending:THREE.AdditiveBlending,depthWrite:false}));
+baseGlow.scale.set(1.22,.92,1.10); brain.add(baseGlow);
+
+// ── ELECTRODES (posiciones INTERNAS al cerebro) ─────────
+// Geometría para las esferas de activación
+const electrodes3D = [];
 const electrodeGroup = new THREE.Group();
 brain.add(electrodeGroup);
-const electrodes=[];
-const dotGeo = new THREE.SphereGeometry(.055,16,12);
-const lineMat = new THREE.LineBasicMaterial({color:0x7dd3fc,transparent:true,opacity:.13});
 
-electrodePositions.forEach(([name,x,y,z],i)=>{
-  const mat = new THREE.MeshStandardMaterial({
-    color:0x38dfff,
-    emissive:0x38dfff,
-    emissiveIntensity:.7,
-    roughness:.22,
-    metalness:.0
-  });
-  const dot = new THREE.Mesh(dotGeo, mat);
-  dot.position.set(x,y,z);
-  dot.userData = {name, base:new THREE.Vector3(x,y,z), phase:i*.71};
-  electrodeGroup.add(dot);
-  electrodes.push(dot);
+// líneas de conexión tenues entre electrodos vecinos (topología 10-20)
+const connectionPairs = [
+  ['Fp1','F3'],['Fp2','F4'],['Fp1','Fp2'],['F3','Fz'],['F4','Fz'],
+  ['F3','C3'],['F4','C4'],['Fz','Cz'],
+  ['C3','Cz'],['C4','Cz'],['C3','T3'],['C4','T4'],
+  ['C3','P3'],['C4','P4'],['Cz','Pz'],
+  ['P3','Pz'],['P4','Pz'],['P3','O1'],['P4','O2'],['T3','P3'],['T4','P4'],
+];
 
-  const geo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,0), dot.position.clone()]);
-  const ln = new THREE.Line(geo,lineMat);
-  electrodeGroup.add(ln);
+const connMap = {};
+ELECTRODES.forEach(e=>{ connMap[e.name]=new THREE.Vector3(...e.pos); });
+
+const connMat = new THREE.LineBasicMaterial({color:0x38dfff,transparent:true,opacity:.08});
+connectionPairs.forEach(([a,b])=>{
+  if(!connMap[a]||!connMap[b]) return;
+  const geo=new THREE.BufferGeometry().setFromPoints([connMap[a].clone(),connMap[b].clone()]);
+  electrodeGroup.add(new THREE.Line(geo,connMat));
 });
 
-const spikeGeo = new THREE.BufferGeometry();
-const spikePts = [];
-for(let i=0;i<100;i++){
-  const x = -2.2 + i*(4.4/99);
-  let y = Math.sin(i*.42)*.12;
-  if(i>48 && i<54) y += (1 - Math.abs(i-51)/3) * .95;
-  spikePts.push(new THREE.Vector3(x,y,-2.35));
-}
-spikeGeo.setFromPoints(spikePts);
-const spikeLine = new THREE.Line(spikeGeo,new THREE.LineBasicMaterial({color:0xf59e0b,transparent:true,opacity:.55}));
-scene.add(spikeLine);
+// Esferas de activación
+ELECTRODES.forEach((e, i)=>{
+  const col = REGION_COLORS[e.region];
+  // esfera interna (activación)
+  const innerGeo = new THREE.SphereGeometry(.06, 20, 14);
+  const mat = new THREE.MeshStandardMaterial({
+    color: col,
+    emissive: col,
+    emissiveIntensity: .8,
+    roughness: .18,
+    metalness: .0,
+    transparent: true,
+    opacity: .90,
+  });
+  const dot = new THREE.Mesh(innerGeo, mat);
+  dot.position.set(...e.pos);
+  dot.userData = { name: e.name, base: new THREE.Vector3(...e.pos), phase: i * .71, region: e.region };
 
-const grid = new THREE.GridHelper(6.5, 18, 0x38dfff, 0x1e3a5f);
-grid.position.y = -1.75;
-grid.material.transparent = true;
-grid.material.opacity = .18;
+  // halo suave exterior
+  const haloGeo = new THREE.SphereGeometry(.14, 16, 12);
+  const haloMat = new THREE.MeshBasicMaterial({
+    color: col,
+    transparent: true,
+    opacity: .12,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+  });
+  const halo = new THREE.Mesh(haloGeo, haloMat);
+  halo.position.set(...e.pos);
+
+  electrodeGroup.add(dot);
+  electrodeGroup.add(halo);
+  electrodes3D.push({ dot, halo, name: e.name, region: e.region, col });
+});
+
+// spike line
+const spikePts=[];
+for(let i=0;i<100;i++){
+  const x=-2.0+i*(4.0/99); let y=Math.sin(i*.42)*.10;
+  if(i>48&&i<54) y+=(1-Math.abs(i-51)/3)*.90;
+  spikePts.push(new THREE.Vector3(x,y,-2.20));
+}
+const spikeLine=new THREE.Line(new THREE.BufferGeometry().setFromPoints(spikePts),new THREE.LineBasicMaterial({color:0xf59e0b,transparent:true,opacity:.55}));
+spikeLine.position.x=-1.20; scene.add(spikeLine);
+
+const grid=new THREE.GridHelper(6.0,18,0x38dfff,0x1e3a5f);
+grid.position.set(-.80,-1.70,0); grid.material.transparent=true; grid.material.opacity=.16;
 scene.add(grid);
 
 function resize(){
-  const rect = canvas.parentElement.getBoundingClientRect();
-  renderer.setSize(rect.width, rect.height, false);
-  camera.aspect = rect.width / Math.max(1, rect.height);
+  const rect=canvas.parentElement.getBoundingClientRect();
+  renderer.setSize(rect.width,rect.height,false);
+  camera.aspect=rect.width/Math.max(1,rect.height);
   camera.updateProjectionMatrix();
 }
-window.addEventListener('resize', resize);
+window.addEventListener('resize',resize);
 resize();
 
-const clock = new THREE.Clock();
+const clock=new THREE.Clock();
 
+// ── ANIMATE ─────────────────────────────────────────────
 function animate(){
-  const t = clock.getElapsedTime();
-  const target = new THREE.Color(mode.color);
-  shell.material.color.lerp(target,.04);
-  inner.material.color.lerp(target,.025);
+  const t=clock.getElapsedTime();
+  const target=new THREE.Color(mode.color);
+  const pinkTarget=new THREE.Color(0xffadc6).lerp(target,.24);
 
-  brain.rotation.y = Math.sin(t*.12)*.18;
-  brain.rotation.x = Math.sin(t*.09)*.06;
+  cortexShells.forEach((m,idx)=>{
+    m.material.color.lerp(pinkTarget,.028);
+    m.material.emissive.lerp(target,.014);
+    m.material.opacity=0.24+0.032*Math.sin(t*1.10+idx*.7);
+  });
+  holoShells.forEach((m,idx)=>{
+    m.material.color.lerp(new THREE.Color(0xffc7d9).lerp(target,.18),.05);
+    m.material.opacity=0.036+0.014*Math.sin(t*1.6+idx);
+  });
+  deepNodes.forEach(m=>{
+    if(m.material.color) m.material.color.lerp(pinkTarget,.016);
+    if(m.material.emissive) m.material.emissive.lerp(target,.010);
+  });
+  cerebellarMeshes.forEach(m=>{
+    if(m.material.color) m.material.color.lerp(pinkTarget,.016);
+    if(m.material.emissive) m.material.emissive.lerp(target,.010);
+  });
+  baseGlow.material.color.lerp(pinkTarget,.03);
+  baseGlow.material.opacity=0.026+0.014*Math.sin(t*1.2);
 
-  waves.forEach((w,idx)=>{
-    w.rotation.z += .0015 * mode.speed * (idx+1);
-    w.material.color.lerp(target,.025);
-    w.material.opacity = .22 + .18*Math.sin(t*mode.speed + idx);
-    const pos = w.geometry.attributes.position;
+  brain.rotation.y=Math.sin(t*.10)*.15;
+  brain.rotation.x=Math.sin(t*.08)*.05;
+  brain.rotation.z=Math.sin(t*.06)*.016;
+
+  foldLines.forEach((line,idx)=>{
+    line.material.color.lerp(pinkTarget,.026);
+    line.material.opacity=0.20+0.12*Math.sin(t*mode.speed+idx*.22);
+    const pos=line.geometry.attributes.position;
+    const base=line.geometry.userData.base;
+    if(!base) return;
     for(let i=0;i<pos.count;i++){
-      const x=pos.getX(i);
-      const z=pos.getZ(i);
-      const base=Math.sin(i*.18 + t*mode.speed*2 + idx);
-      const artifact = modeName === 'artifact' ? Math.sin(i*1.7+t*7.0)*mode.chaos : 0;
-      pos.setY(i, base*mode.amp*.16 + artifact*.13 + Math.sin(z*2+t+idx)*.05);
+      const p=base[i];
+      const wave=Math.sin(t*mode.speed*1.8+i*.11+idx)*mode.amp*0.016;
+      const art=modeName==='artifact'?Math.sin(i*.95+t*8.6+idx)*mode.chaos*0.038:0;
+      pos.setXYZ(i,p.x,p.y+wave+art,p.z+wave*.22);
     }
-    pos.needsUpdate = true;
+    pos.needsUpdate=true;
   });
 
-  electrodes.forEach((e,i)=>{
-    const posterior = e.userData.name.startsWith('O') || e.userData.name.startsWith('P');
-    const frontal = e.userData.name.startsWith('Fp') || e.userData.name.startsWith('F');
-    let boost = posterior ? mode.posterior : .52;
-    if(modeName === 'artifact' && frontal) boost = 1.4;
-    if(modeName === 'spike' && (e.userData.name === 'T3' || e.userData.name === 'C3' || e.userData.name === 'P3')) boost = 1.35;
-
-    const pulse = .5 + .5*Math.sin(t*mode.speed*4 + e.userData.phase);
-    const intensity = .35 + boost*pulse + mode.chaos*Math.random()*0.18;
-    e.scale.setScalar(1 + intensity*.72);
-    e.material.color.lerp(target,.06);
-    e.material.emissive.lerp(target,.06);
-    e.material.emissiveIntensity = .35 + intensity*.9;
+  neuralTrails.forEach((line,idx)=>{
+    line.material.color.lerp(target,.02);
+    line.material.opacity=0.10+0.10*Math.sin(t*1.8+idx*.9);
+    const pos=line.geometry.attributes.position;
+    const base=line.geometry.userData.base;
+    for(let i=0;i<pos.count;i++){
+      const p=base[i];
+      const pulse=Math.sin(t*3.2-i*.08+idx)*.026;
+      pos.setXYZ(i,p.x,p.y+pulse,p.z);
+    }
+    pos.needsUpdate=true;
   });
 
-  spikeLine.visible = modeName === 'spike' || modeName === 'artifact';
-  spikeLine.material.opacity = modeName === 'spike' ? .70 + .18*Math.sin(t*5) : .34 + .28*Math.sin(t*12);
+  // Animate electrodes based on per-electrode activity for current mode
+  const modeColor = new THREE.Color(mode.color);
+  electrodes3D.forEach(({dot, halo, name, region}, i)=>{
+    const baseActivity = mode.activity[name] ?? 0.3;
+    const pulse = .5 + .5 * Math.sin(t * mode.speed * 4 + i * .71);
+    const chaos = modeName === 'artifact' ? mode.chaos * Math.random() * .4 : 0;
+    const intensity = baseActivity * (.6 + .4 * pulse) + chaos;
+
+    // scale: más actividad = esfera más grande
+    const sc = 0.6 + intensity * 1.2;
+    dot.scale.setScalar(sc);
+    halo.scale.setScalar(sc * 1.8);
+
+    // color: lerp hacia color del modo ponderado por actividad
+    const regionCol = new THREE.Color(REGION_COLORS[region]);
+    const blended = regionCol.clone().lerp(modeColor, intensity * .55);
+    dot.material.color.copy(blended);
+    dot.material.emissive.copy(blended);
+    dot.material.emissiveIntensity = 0.4 + intensity * 1.2;
+    dot.material.opacity = 0.5 + intensity * .5;
+
+    halo.material.color.copy(blended);
+    halo.material.opacity = 0.05 + intensity * .22;
+  });
+
+  // connectors lerp color
+  electrodeGroup.children.forEach(child=>{
+    if(child.isLine && child.material){
+      child.material.color.lerp(modeColor, .02);
+      child.material.opacity = 0.06 + 0.06 * Math.sin(t * .8);
+    }
+  });
+
+  spikeLine.visible=modeName==='spike'||modeName==='artifact';
+  spikeLine.material.opacity=modeName==='spike'?.68+.16*Math.sin(t*5):.32+.26*Math.sin(t*12);
   spikeLine.material.color.lerp(target,.05);
-  spikeLine.position.y = -1.28 + Math.sin(t*1.2)*.04;
+  spikeLine.position.y=-1.24+Math.sin(t*1.2)*.04;
 
   controls.update();
   renderer.render(scene,camera);
